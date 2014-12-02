@@ -100,5 +100,5 @@ function [] = updateBatch_test()
   V = rand(nDims, nCols);
   t = 1;
   [F, G_Ub, G_Vb, points] = mixNmatchMF_objective_sparse(M, U, V, options, t);
-  [U, V] = mixNmatchMF_update_batch(U, G_Ub, V, G_Vb, points, options, t)
+  [U, V] = mixNmatchMF_update_batch(M, U, G_Ub, V, G_Vb, points, options, t);
 end
