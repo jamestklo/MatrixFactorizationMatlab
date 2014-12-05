@@ -1,4 +1,4 @@
-MatrixFactorizationPy
+MatrixFactorizationMatLab
 =====================
 
-matrix factorization using python, exploring various gradient methods
+matrix factorization using matlab, exploring various gradient methods
