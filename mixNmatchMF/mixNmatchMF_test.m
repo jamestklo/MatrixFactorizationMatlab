@@ -124,8 +124,6 @@ function [] = main_test()
   options.batchAt = @mixNmatchMF_batchAt_random;
   options.batchSize = nRows*nCols;
 
-  options.objectiveAt = @mixNmatchMF_lossAt_L2;
-
   options.regularizeAt  = @mixNmatchMF_regularizeAt_L2;
   options.lambdaU = 0.001;
   options.lambdaV = options.lambdaU;
@@ -133,5 +131,6 @@ function [] = main_test()
   options.update = @mixNmatchMF_update_batch;
   options.stepSize = -0.01;
 
+  options.objectiveAt = @mixNmatchMF_lossAt_L2;
   [U, V] = mixNmatchMF(M, U, V, options);
 end
