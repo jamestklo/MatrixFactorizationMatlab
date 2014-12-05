@@ -122,10 +122,9 @@ function [] = main_test()
   options.difference = 0;
 
   options.batchAt = @mixNmatchMF_batchAt_random;
-  options.batchSize = 1;
+  options.batchSize = nRows*nCols;
 
   options.objectiveAt = @mixNmatchMF_lossAt_L2;
-
 
   options.regularizeAt  = @mixNmatchMF_regularizeAt_L2;
   options.lambdaU = 0.001;
