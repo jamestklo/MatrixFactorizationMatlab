@@ -20,6 +20,6 @@ function [U, V] = mixNmatchMF_update_batch(M, U, G_Ub, V, G_Vb, points, options,
     % stepSize > 0 for ascent
     stepSize = stepSize/batchSize;
     U = U + stepSize*G_U;
-    V = V + stepSize*G_V;	
+    V = V + stepSize*G_V;
   end
 end

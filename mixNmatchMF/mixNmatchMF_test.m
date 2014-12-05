@@ -35,14 +35,14 @@ end
 function [] = lossAt_L2_test()
   nRows = 10;
   nCols = 20;
-  nDims = 4;
+  nDims = 2;
 
-  M = rand(nRows, nCols);  
+  M = rand(nRows, nCols);
   U = rand(nRows, nDims);
   V = rand(nDims, nCols);
   i = ceil(nRows*rand(1));
   j = ceil(nCols*rand(1));
-  [f, gu, gv] = mixNmatchMF_lossAt_L2(M, U, V, i, j);
+  [f, gu, gv] = mixNmatchMF_lossAt_L2(M, U, V, i, j)
 end
 
 function [] = batchAt_test()
@@ -108,25 +108,31 @@ function [] = updateBatch_test()
 end
 
 function [] = main_test()
-  nRows = 10;
-  nCols = 20;
-  nDims = 4;
-
-  options = struct;
-  options.objectiveAt = @mixNmatchMF_lossAt_L2;
-  options.regularizeAt  = @mixNmatchMF_regularizeAt_L2;
-  options.batchAt = @mixNmatchMF_batchAt_random;
-  options.lambdaU = 0.0001;
-  options.lambdaV = options.lambdaU;
-  
-  options.maxIter = 10;
-  options.tolerance = 0.0001;
-  options.difference = 0.0001;
-  options.objective = @mixNmatchMF_objective_sparse;
-  options.update = @mixNmatchMF_update_batch;
-
-  M = rand(nRows, nCols);
+  nRows = 100;
+  nCols = 200;
+  nDims = 5;
+  M = ones(nRows, nCols);
   U = rand(nRows, nDims);
   V = rand(nDims, nCols);
+
+  options = struct;
+  options.objective = @mixNmatchMF_objective_sparse;
+  options.maxIter = 10000;
+  options.tolerance = 0;
+  options.difference = 0;
+
+  options.batchAt = @mixNmatchMF_batchAt_random;
+  options.batchSize = 1;
+
+  options.objectiveAt = @mixNmatchMF_lossAt_L2;
+
+
+  options.regularizeAt  = @mixNmatchMF_regularizeAt_L2;
+  options.lambdaU = 0.001;
+  options.lambdaV = options.lambdaU;
+
+  options.update = @mixNmatchMF_update_batch;
+  options.stepSize = -0.01;
+
   [U, V] = mixNmatchMF(M, U, V, options);
 end
