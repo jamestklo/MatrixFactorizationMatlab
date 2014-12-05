@@ -1,4 +1,4 @@
-function [f, gu, gv] = lossL2at(M, U, V, i, j)
+function [f, gu, gv] = mixNmatchMF_lossL2At(M, U, V, i, j)
   Ui = U(i,:); % 1 x nDim
   Vj = V(:,j); % nDim x 1
   f = (M(i,j) - Ui*Vj);
