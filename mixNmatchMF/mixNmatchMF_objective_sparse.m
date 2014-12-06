@@ -1,11 +1,15 @@
 function [f, G_Ub, G_Vb, points] = mixNmatchMF_objectiveSparse(M, U, V, options, t)
   objectiveAt	= options.objectiveAt;
-  regularizeAt	= options.regularizeAt;
-  isRegularizing = 
+  if isfield(options, 'regularizeAt') 
+    regularizeAt = options.regularizeAt;
+    lambdaU = options.lambdaU;
+    lambdaV = options.lambdaV;  
+  else
+    lambdaU = 0;
+    lambdaV = 0;
+  end
+  
   batchAt		= options.batchAt;
- 
-  lambdaU = options.lambdaU;
-  lambdaV	= options.lambdaV;  
   
   [nRows, nCols] = size(M);
   f = 0;
@@ -21,7 +25,7 @@ function [f, G_Ub, G_Vb, points] = mixNmatchMF_objectiveSparse(M, U, V, options,
     f = f + o_f;
 
     % if regularizer is a function
-    if isRegularizing
+    if lambdaU ~= 0 || lambdaV ~= 0
       [r_f, r_gu, r_gv] = regularizeAt(U, lambdaU, V, lambdaV, i, j);
       f = f + r_f;
       G_Ub{b} = G_Ub{b} + r_gu; % 1 x nDim

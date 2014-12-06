@@ -1,5 +1,5 @@
 % has to know API header, what each input argument is
-function [f, gu, gv] = mixNmatch_objectiveAt_climf(Y, U, V, i, j)
+function [f, gu, gv] = mixNmatch_objectiveAt_CLiMF(Y, U, V, i, j)
 % Y	nRows x nCols matrix
 % U nRows x nDims matrix
 % V	nDims x nCols matrix

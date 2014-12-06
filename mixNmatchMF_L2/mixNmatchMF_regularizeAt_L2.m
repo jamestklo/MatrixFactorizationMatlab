@@ -1,4 +1,4 @@
-function [f, gu, gv] = mixNmatchMF_regularizeL2At(U, lambdaU, V, lambdaV, i, j)
+function [f, gu, gv] = mixNmatchMF_regularizeAt_L2(U, lambdaU, V, lambdaV, i, j)
   Ui = U(i,:); % 1 x nDim
   Vj = V(:,j); % nDim x 1
   f  = lambdaU*Ui*(Ui') + lambdaV*(Vj')*Vj;
