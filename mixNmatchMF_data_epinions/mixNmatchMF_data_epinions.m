@@ -50,3 +50,16 @@ function [options] = mixNmatchMF_epinions_MMMF(options)
 	% stochastic gradient descent
 	options.stepSize = -0.01;
 end
+<<<<<<< HEAD
+=======
+
+function [options] = mixNmatchMF_epinions_CLiMF(options)
+	addpath '../mixNmatchMF_CLiMF/';
+	options.objectiveAll = @mixNmatchMF_objective_CLiMF;
+	options.objectiveAt = @mixNmatchMF_objectiveAt_CLiMF;
+	% stochastic gradient ascent
+	options.stepSize = +0.01;
+	options.lambdaU = -options.lambdaU;
+	options.lambdaV = -options.lambdaV;
+end
+>>>>>>> origin/master
