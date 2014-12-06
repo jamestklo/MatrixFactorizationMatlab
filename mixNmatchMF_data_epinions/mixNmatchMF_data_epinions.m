@@ -90,5 +90,4 @@ function [options] = mixNmatchMF_epinions_CLiMF(options)
 	options.stepSize = +0.01;
 	options.lambdaU = -options.lambdaU;
 	options.lambdaV = -options.lambdaV;
-
 end
