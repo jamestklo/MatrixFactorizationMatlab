@@ -1,4 +1,4 @@
-function [Uopt, Vopt, f_opt, f_all, t_opt, times] = mixNmatchMF(M, U, V, options)
+function [Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memry_999] = mixNmatchMF(M, U, V, options)
 	options = mixNmatchMF_default(options);
 
 	tolerance = options.tolerance;
@@ -19,20 +19,21 @@ function [Uopt, Vopt, f_opt, f_all, t_opt, times] = mixNmatchMF(M, U, V, options
 	f_prev = -Inf;
 
 	maxIter = options.maxIter;
-	times = cell(maxIter, 1);
+	times = zeros(maxIter, 1);
 	for t=1:maxIter
-        tic;
+		pack; % consolidate memory
+		tic;	% start timer
 		[f, G_Ub, G_Vb, points] = objective(M, U, V, options, t);
 		[U, V] = update(M, U, G_Ub, V, G_Vb, points, options, t);
-		times{t} = toc;
+		times(t) = toc;	
+		memry(t) = memory; % read memory usage
+		memry(t) = ceil( (memry(t).MemUsedMATLAB)/1000000 );
 
 		if ( (stepSize > 0 && f > f_opt) || (stepSize < 0 && f < f_opt) )
 			f_opt = f;
 			t_opt = t;
 			Uopt = U;
 			Vopt = V;
-			f_all = objectiveAll(M, U, V);
-			fprintf('mixNmatchMF(): t=%d\tf_opt=%1.16d\tf_all=%1.16d\ttime=%1.16d\n', t, f_opt, f_all, times{t});
 		end
 		
 		% check for acceptance or convergence
@@ -47,6 +48,13 @@ function [Uopt, Vopt, f_opt, f_all, t_opt, times] = mixNmatchMF(M, U, V, options
 			%f_prev = f;
 		%end
 	end
+	f_all = objectiveAll(M, Uopt, Vopt);
+	%times_tot = sum(times(1:t_opt));
+	times_avg = mean(times);
+	times_999 = prctile(times, 99.9);
+	memry_avg = means(memry);
+	memry_999 = prctile(memry, 99.9);
+	fprintf('mixNmatchMF(): t=%d\tf_opt=%1.16d\tf_all=%1.16d\ttime=%1.16d\n', t_opt, f_opt, f_all, times{t_opt});
 end
 
 function [options] = mixNmatchMF_default(options)

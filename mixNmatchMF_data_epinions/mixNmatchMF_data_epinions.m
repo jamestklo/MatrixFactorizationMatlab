@@ -1,5 +1,5 @@
 function [] = mixNmatchMF_data_epinions()
-	mixNmatchMF_data_epinions1();
+	mixNmatchMF_data_epinions2();
 end
 
 function [] = mixNmatchMF_data_epinions2()
@@ -7,55 +7,24 @@ function [] = mixNmatchMF_data_epinions2()
 	addpath '../matrixMarket/';
 	addpath '../mixNmatchMF_L2/';
 
-	[M, nRows, nCols, entries] = mmread('../../climf/EP25_UPL5_train.mtx');
+	[M, nRows, nCols, entries] = mmread('../../climf/EP25_UPL5_test.mtx');
 	nDims = 5;
 	U = rand(nRows, nDims);
 	V = rand(nDims, nCols);
-
+  fprintf('nnz=%d\tnRows=%d\tnCols%d\n', nnz(M), nRows, nCols);
 	tic;
-	f = mixNmatchMF_loss_L2(M, U, V)
+	%f = mixNmatchMF_loss_L2(M, U, V)
 	toc;
 end
 
-function [] = mixNmatchMF_data_epinions1()
-	addpath '../mixNmatchMF/';
+function [M, nRows, nCols] = mixNmatchMF_data_epinionsT()
 	addpath '../matrixMarket/';
-	addpath '../mixNmatchMF_climf/';
+	[M, nRows, nCols] = mmread('../../climf/EP25_UPL5_train.mtx');
+end
 
-	options = struct;
-	options.objective = @mixNmatchMF_objective_sparse;
-	options.maxIter = 10000;
-	options.tolerance = 0;
-	options.difference = 0;
-
-	options.batchAt = @mixNmatchMF_batchAt_random;
-	options.batchSize = 1;
-
-	options.regularizeAt = @mixNmatchMF_regularizeAt_L2;
-	options.lambdaU = 0.001;
-	options.lambdaV = options.lambdaU;
-
-	options.update = @mixNmatchMF_update_batch;
-
-	[M, nRows, nCols, entries] = mmread('../../climf/EP25_UPL5_train.mtx');
-	nDims = 5;
-	U = rand(nRows, nDims);
-	V = rand(nDims, nCols);
-
-	% L2 loss
-	%[options] = mixNmatchMF_epinions_L2(options);
-
-	% climf
-	%[options] = mixNmatchMF_epinions_CLiMF(options);
-
-	% WR-MF
-	%[options] = mixNmatchMF_epinions_WRMF(options);
-
-	% MMMF
-	[options] = mixNmatchMF_epinions_MMMF(options);
-
-
-	[U, V] = mixNmatchMF(M, U, V, options);
+function [M, nRows, nCols] = mixNmatchMF_data_epinionsS()
+	addpath '../matrixMarket/';
+	[M, nRows, nCols] = mmread('../../climf/EP25_UPL5_test.mtx');
 end
 
 function [options] = mixNmatchMF_epinions_L2(options) 
@@ -80,15 +49,4 @@ function [options] = mixNmatchMF_epinions_MMMF(options)
 	options.objectiveAt = @mixNmatchMF_lossAt_MMMF;
 	% stochastic gradient descent
 	options.stepSize = -0.01;
-end
-
-function [options] = mixNmatchMF_epinions_CLiMF(options)
-	addpath '../mixNmatchMF_CLiMF/';
-	options.objectiveAll = @mixNmatchMF_objective_CLiMF;
-	options.objectiveAt = @mixNmatchMF_objectiveAt_CLiMF;
-	% stochastic gradient ascent
-	options.stepSize = +0.01;
-	options.lambdaU = -options.lambdaU;
-	options.lambdaV = -options.lambdaV;
-
 end
