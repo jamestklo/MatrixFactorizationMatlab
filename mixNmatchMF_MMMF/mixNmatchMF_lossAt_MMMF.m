@@ -1,11 +1,11 @@
 function [f, gu, gv] = mixNmatchMF_lossAt_MMMF(M, U, V, i, j)
 	Ui = U(i,:); % 1 x nDim
 	Ui_transposed = Ui';
-  Vj = V(:,j); % nDim x 1
-
-  f = 0;
-  gu = 0;
-  gv = 0;
+	Vj = V(:,j); % nDim x 1
+	
+	f = 0;
+	gu = 0;
+	gv = 0;
 	[nDims, nCols] = size(V);
 	for k=1:nCols
 		if k ~= j
