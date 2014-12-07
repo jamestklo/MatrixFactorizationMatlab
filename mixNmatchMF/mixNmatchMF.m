@@ -20,20 +20,21 @@ function [Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memr
 
 	maxIter = options.maxIter;
 	times = zeros(maxIter, 1);
+	memry = zeros(maxIter, 1);
 	for t=1:maxIter
-		pack; % consolidate memory
 		tic;	% start timer
 		[f, G_Ub, G_Vb, points] = objective(M, U, V, options, t);
 		[U, V] = update(M, U, G_Ub, V, G_Vb, points, options, t);
 		times(t) = toc;	
-		memry(t) = memory; % read memory usage
-		memry(t) = ceil( (memry(t).MemUsedMATLAB)/1000000 );
+		temp = memory; % read memory usage
+		memry(t) = ceil( (temp.MemUsedMATLAB)/1000000 );
 
 		if ( (stepSize > 0 && f > f_opt) || (stepSize < 0 && f < f_opt) )
 			f_opt = f;
 			t_opt = t;
 			Uopt = U;
 			Vopt = V;
+			fprintf('mixNmatchMF(): t=%d\tf_opt=%1.16d\ttime=%1.16d\tmemry=%d\n', t_opt, f_opt, times(t_opt), memry(t_opt));
 		end
 		
 		% check for acceptance or convergence
