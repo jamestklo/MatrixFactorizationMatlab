@@ -9,17 +9,11 @@ function [] = mixNmatchMF_experiment_table(tablepath, optionsF)
 	close all;
 
 	addpath '../mixNmatchMF_data_epinions/';
-  mixNmatchMF_experiment_row(tablepath, 'epinionsT', 1, @optionsF, @mixNmatchMF_data_epinionsT);
-	mixNmatchMF_experiment_row(tablepath, 'epinionsS', 2, @optionsF, @mixNmatchMF_data_epinionsS);
+  mixNmatchMF_experiment_row(tablepath, 'epinionsT', 1, @optionsF, @mixNmatchMF_data_epinionsTrain);
+	mixNmatchMF_experiment_row(tablepath, 'epinionsS', 2, @optionsF, @mixNmatchMF_data_epinionsTest);
 
 	clear all;
 	close all;
-end
-
-function [options] = mixNmatchMF_options_FullGD(options)
-	options.batchAt = @mixNmatchMF_batchAt_random;
-	options.batchSize = 0;
-	options.update = @mixNmatchMF_update_batch;
 end
 
 function [options] = mixNmatchMF_options_SAG0(options)
@@ -41,7 +35,7 @@ function [] = mixNmatchMF_experiment_row(tablepath, rowname, rowAt, optionsF, re
   mixNmatchMF_experiment_run(@readData, @optionsF, @mixNmatchMF_options_FullGD, tablepath, rowAt, 1);
 
 	% Stochastic: colAt=2
-  mixNmatchMF_experiment_run(@readData, @optionsF, @mixNmatchMF_options_Stochastic, tablepath, rowAt, 2);
+  mixNmatchMF_experiment_run(@readData, @optionsF, @mixNmatchMF_options_StochasticGD, tablepath, rowAt, 2);
 
 	% SAG0: colAt = 3;
 	% mixNmatchMF_experiment_run(@readData, @optionsF, @mixNmatchMF_options_SAG0, tablepath, rowAt, 3);
