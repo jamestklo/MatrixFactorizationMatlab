@@ -13,7 +13,7 @@ function [] = mixNmatchMF_data_epinions2()
 	V = rand(nDims, nCols);
   fprintf('nnz=%d\tnRows=%d\tnCols%d\n', nnz(M), nRows, nCols);
 	tic;
-	%f = mixNmatchMF_loss_L2(M, U, V)
+	f = mixNmatchMF_loss_L2(M, U, V)
 	toc;
 end
 
@@ -50,8 +50,6 @@ function [options] = mixNmatchMF_epinions_MMMF(options)
 	% stochastic gradient descent
 	options.stepSize = -0.01;
 end
-<<<<<<< HEAD
-=======
 
 function [options] = mixNmatchMF_epinions_CLiMF(options)
 	addpath '../mixNmatchMF_CLiMF/';
@@ -62,4 +60,3 @@ function [options] = mixNmatchMF_epinions_CLiMF(options)
 	options.lambdaU = -options.lambdaU;
 	options.lambdaV = -options.lambdaV;
 end
->>>>>>> origin/master

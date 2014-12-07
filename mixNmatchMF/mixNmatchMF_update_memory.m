@@ -15,6 +15,7 @@ function [U, V] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points, options
     SAG_mode = max(0, options.SAG_mode);
   else
     SAG_mode = 0;
+    options.SAG_mode = SAG_mode;
   end
   if t == 1
     options.SAG_Umemory = sparse(nRows*nCols, nDims);

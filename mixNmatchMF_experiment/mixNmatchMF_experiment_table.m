@@ -2,7 +2,8 @@ function [] = mixNmatchMF_experiment_table(tablepath, optionsF)
 	tablepath = './CLiMF';
 	optionsF = @mixNmatchMF_epinions_CLiMF;
 	% create new table, set up rows
-	table = cell(2, 19);
+	nCols = 4;
+	table = cell(2, 1+nCols*6);
 	save(tablepath, 'table');
 	clear table;
 	close all;
@@ -15,24 +16,17 @@ function [] = mixNmatchMF_experiment_table(tablepath, optionsF)
 	close all;
 end
 
-function [options] = mixNmatchMF_options_Stochastic(options)
-	options.batchAt = @mixNmatchMF_batchAt_random;
-	options.batchSize = 1;
-	options.update = @mixNmatchMF_update_batch;
-end
-
 function [options] = mixNmatchMF_options_FullGD(options)
 	options.batchAt = @mixNmatchMF_batchAt_random;
 	options.batchSize = 0;
 	options.update = @mixNmatchMF_update_batch;
 end
 
-function [options] = mixNmatchMF_options_SAG(options)
-	options.batchAt = @mixNmatchMF_batchAt_SAG;
-	options.batchSize = 1;
+function [options] = mixNmatchMF_options_SAG0(options)
+	options.batchAt = @mixNmatchMF_batchAt_random;
+	options.batchSize = -1;
 	options.update = @mixNmatchMF_update_memory;
 end
-
 
 function [] = mixNmatchMF_experiment_row(tablepath, rowname, rowAt, optionsF, readData);
 	load(tablepath);
@@ -49,8 +43,8 @@ function [] = mixNmatchMF_experiment_row(tablepath, rowname, rowAt, optionsF, re
 	% Stochastic: colAt=2
   mixNmatchMF_experiment_run(@readData, @optionsF, @mixNmatchMF_options_Stochastic, tablepath, rowAt, 2);
 
-	% SAG: colAt = 3;
-	mixNmatchMF_experiment_run(@readData, @optionsF, @mixNmatchMF_options_SAG, tablepath, rowAt, 3);
+	% SAG0: colAt = 3;
+	% mixNmatchMF_experiment_run(@readData, @optionsF, @mixNmatchMF_options_SAG0, tablepath, rowAt, 3);
 end
 
 
@@ -80,7 +74,7 @@ end
 function [] = mixNmatchMF_experiment_add(filepath, rowAt, colAt, f_all, t_opt, times_avg, times_999, memry_avg, memry_999)
   % read data from file
   load(filepath);
-  nCols = 3;
+  nCols = 4;
 
   % add f_all
   table{rowAt, 1+0*nCols+colAt} = f_all;

@@ -2,13 +2,20 @@ function [points] = mixNmatchMF_batchAt_random(M, options, t)
   totalSize = nnz(M);
   if isfield(options, 'batchSize')
     batchSize = options.batchSize;
+    if (batchSize < 0) 
+      if t == 1
+        batchSize = totalSize;
+      else
+        batchSize = -batchSize;
+      end
+    end
   else 
     batchSize = 1;
     options.batchSize = 1;
   end
 
   points = find(M);
-  if (batchSize > 0) && (batchSize < totalSize)
+  if (batchSize ~= 0) && (batchSize < totalSize)
     % randomly select batchSize points from non-zero entries
     % sample without replacement
     maxSwaps = min(batchSize, round(totalSize/2));
