@@ -26,8 +26,8 @@ function [Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memr
 		[f, G_Ub, G_Vb, points] = objective(M, U, V, options, t);
 		[U, V] = update(M, U, G_Ub, V, G_Vb, points, options, t);
 		times(t) = toc;	
-		temp = memory; % read memory usage
-		memry(t) = ceil( (temp.MemUsedMATLAB)/1000000 );
+		%temp = memory; % read memory usage
+		%memry(t) = ceil( (temp.MemUsedMATLAB)/1000000 );
 
 		if ( (stepSize > 0 && f > f_opt) || (stepSize < 0 && f < f_opt) )
 			f_opt = f;

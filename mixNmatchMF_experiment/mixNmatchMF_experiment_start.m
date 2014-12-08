@@ -2,11 +2,8 @@ function [results, labels] = mixNmatchMF_experiment_start(data, num)
   results = cell(length(data), 1);
   labels  = cell(length(data), 1);
 
-  if isa(@matlabpool, 'function_handle')
-    matlabpool(num);
-  elseif isa(@parpool, 'function_handle')
-    parpool(num);
-  end
+  %matlabpool(num);
+  %parpool(num);
   
   % parallel execution
   parfor d=1:length(results)
