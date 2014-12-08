@@ -3,34 +3,42 @@ function [results, labels] = mixNmatchMF_experiment_start(data, num)
   labels  = cell(length(data), 1);
 
   % detect availability of parallel computing
-  if exist('matlabpool') == 5
-		matlabpool(num);
-	elseif exist('parpool') == 5
-		parpool(num);
+  if exist('matlabpool') > 0
+		matlabpool;
+	elseif exist('parpool') > 0
+		poolobj = parpool;
   end
   
   % parallel execution
   parfor d=1:length(results)
     if length(data{d}) > 0
-      labels{d}  = data{d}{1};
-      results{d} = mixNmatchMF_experiment_gradients(data{d}{2}, data{d}{3}, data{d}{4});
-    end
+     	labels{d}  = data{d}{1};
+     	results{d} = mixNmatchMF_experiment_gradients(data{d}{2}, data{d}{3}, data{d}{4});
+    end  	
+  end
+
+  if exist('matlabpool') > 0
+  	matlabpool close;
+  elseif exist('parpool') > 0
+  	delete(poolobj);
   end
 end
 
 
-function [gradients] = mixNmatchMF_experiment_gradients(options, optionsF, readData)
+function [measurements] = mixNmatchMF_experiment_gradients(options, optionsF, readData)
   addpath '../mixNmatchMF/';
 
   gradients = cell(4, 1);
-  gradients{1} = @mixNmatchMF_options_FullGD;      
+  gradients{1} = @mixNmatchMF_options_FullGD;
   gradients{2} = @mixNmatchMF_options_StochasticGD; 
   %gradients{3} = @mixNmatchMF_options_SAG0;
   %gradients{4} = @mixNmatchMF_options_SAGbuffered;
 
+  measurements = cell(length(gradients), 1);
   parfor g=1:length(gradients)
     if isa(gradients{g}, 'function_handle')
-      gradients{g} = mixNmatchMF_experiment_run(options, readData, optionsF, gradients{g});
+      [f_all, t_opt, times_avg, times_999, memry_avg, memry_999] = mixNmatchMF_experiment_run(options, readData, optionsF, gradients{g});
+      measurements{g} = [f_all, t_opt, times_avg, times_999, memry_avg, memry_999];
     end
   end
 end
@@ -40,6 +48,7 @@ function [options] = mixNmatchMF_options_FullGD(options)
 	options.batchAt = @mixNmatchMF_batchAt_random;
 	options.batchSize = 0;
 	options.update = @mixNmatchMF_update_batch;
+	options.maxIter = options.maxIter / 10;
 end
 
 

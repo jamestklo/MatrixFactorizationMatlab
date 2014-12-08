@@ -19,15 +19,17 @@ function [Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memr
 	f_prev = -Inf;
 
 	maxIter = options.maxIter;
-	times = zeros(maxIter, 1);
-	memry = zeros(maxIter, 1);
+	times = zeros(1, maxIter);
+	memry = zeros(1, maxIter);
 	for t=1:maxIter
 		tic;	% start timer
 		[f, G_Ub, G_Vb, points] = objective(M, U, V, options, t);
 		[U, V] = update(M, U, G_Ub, V, G_Vb, points, options, t);
 		times(t) = toc;	
-		%temp = memory; % read memory usage
-		%memry(t) = ceil( (temp.MemUsedMATLAB)/1000000 );
+		if exist('memory') == 5
+			temp = memory; % read memory usage
+			memry(t) = ceil( (temp.MemUsedMATLAB)/1000000 );
+		end
 
 		if ( (stepSize > 0 && f > f_opt) || (stepSize < 0 && f < f_opt) )
 			f_opt = f;
