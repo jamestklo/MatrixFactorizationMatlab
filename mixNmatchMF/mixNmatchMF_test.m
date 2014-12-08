@@ -57,7 +57,7 @@ end
 function [] = position_test()
   nRows = 10;
   nCols = 20;
-  for p=1:(nRows*nCols)
+  parfor p=1:(nRows*nCols)
     [i, j] = position(p, nRows);
 	  fprintf('position_test() %d=(%d, %d)\n', p, i, j);
   end  
@@ -80,7 +80,7 @@ function [] = objectiveSparse_test()
   V = rand(nDims, nCols);
   t = 1;
   [f, G_Ub, G_Vb, points] = mixNmatchMF_objective_sparse(M, U, V, options, t);
-  for b=1:length(points);
+  parfor b=1:length(points);
     p = points(b);
     [i, j] = position(p, nRows);
     fprintf('objectiveSparse_test() %d=(%d, %d)\n', p, i, j);

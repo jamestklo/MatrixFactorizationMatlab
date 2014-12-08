@@ -1,4 +1,4 @@
-function [f, gu, gv] = mixNmatchMF_lossAt_wrmf(M, U, V, i, j)
+function [f, gu, gv] = mixNmatchMF_lossAt_WRMF(M, U, V, i, j)
 	Ui = U(i,:); % 1 x nDim
   Vj = V(:,j); % nDim x 1
   Mij = M(i,j);
