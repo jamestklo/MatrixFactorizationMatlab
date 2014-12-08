@@ -53,9 +53,9 @@ function [Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memr
 	%times_tot = sum(times(1:t_opt));
 	times_avg = mean(times);
 	times_999 = prctile(times, 99.9);
-	memry_avg = means(memry);
+	memry_avg = mean(memry);
 	memry_999 = prctile(memry, 99.9);
-	fprintf('mixNmatchMF(): t=%d\tf_opt=%1.16d\tf_all=%1.16d\ttime=%1.16d\n', t_opt, f_opt, f_all, times{t_opt});
+	fprintf('mixNmatchMF(): t=%d\tf_opt=%1.16d\tf_all=%1.16d\ttimes_avg=%1.16d\ttimes_999=%1.16d\tmemry_avg=%1.16d\tmemry_999=%1.16d\n', t_opt, f_opt, f_all, times_avg, times_999, memry_avg, memry_999);
 end
 
 function [options] = mixNmatchMF_default(options)
