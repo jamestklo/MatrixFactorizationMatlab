@@ -3,11 +3,12 @@ function [results, labels] = mixNmatchMF_experiment_start(data)
   labels  = cell(length(data), 1);
 
   % detect availability of parallel computing
-  if exist('matlabpool') > 0
-		matlabpool;
-	elseif exist('parpool') > 0
+	if exist('parpool') > 0
 		poolobj = parpool;
+  elseif exist('matlabpool') > 0
+    matlabpool;    
   end
+
   
   % parallel execution
   parfor d=1:length(results)
