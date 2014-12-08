@@ -4,7 +4,8 @@ function [results, labels] = mixNmatchMF_experiment_start(data)
 
   % detect availability of parallel computing
 	if exist('parpool') > 0
-		poolobj = parpool;
+    myCluster = parcluster('local');
+		poolobj = parpool(myCluster);
   elseif exist('matlabpool') > 0
     matlabpool;    
   end
@@ -22,6 +23,7 @@ function [results, labels] = mixNmatchMF_experiment_start(data)
   	matlabpool close;
   elseif exist('parpool') > 0
   	delete(poolobj);
+    delete(myCluster.Jobs);
   end
 end
 
@@ -32,7 +34,7 @@ function [measurements] = mixNmatchMF_experiment_gradients(options, optionsF, re
   gradients = cell(3, 1);
   gradients{1} = @mixNmatchMF_options_FullGD;
   gradients{2} = @mixNmatchMF_options_StochasticGD; 
-  gradients{3} = @mixNmatchMF_options_SAG;
+  %gradients{3} = @mixNmatchMF_options_SAG;
 
   measurements = cell(length(gradients), 1);
   parfor g=1:length(gradients)
