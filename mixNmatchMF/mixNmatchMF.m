@@ -20,7 +20,7 @@ function [Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memr
 
 	maxIter = options.maxIter;
 	times = zeros(1, maxIter);
-	%memry = zeros(1, maxIter);
+	memry = zeros(1, maxIter);
 	for t=1:maxIter
 		tic;	% start timer
 		[f, G_Ub, G_Vb, points] = objective(M, U, V, options, t);

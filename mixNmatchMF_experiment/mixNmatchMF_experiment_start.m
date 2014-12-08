@@ -12,6 +12,7 @@ function [results, labels] = mixNmatchMF_experiment_start(data)
 
   
   % parallel execution
+  size(data)
   parfor d=1:length(results)
     if length(data{d}) > 0
      	labels{d}  = data{d}{1};
@@ -19,11 +20,11 @@ function [results, labels] = mixNmatchMF_experiment_start(data)
     end  	
   end
 
-  if exist('matlabpool') > 0
-  	matlabpool close;
-  elseif exist('parpool') > 0
+  if exist('parpool') > 0
   	delete(poolobj);
-    delete(myCluster.Jobs);
+    delete(myCluster.Jobs);  
+  elseif exist('matlabpool') > 0
+    matlabpool close;
   end
 end
 
