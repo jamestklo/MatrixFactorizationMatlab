@@ -2,8 +2,12 @@ function [results, labels] = mixNmatchMF_experiment_start(data, num)
   results = cell(length(data), 1);
   labels  = cell(length(data), 1);
 
-  %matlabpool(num);
-  %parpool(num);
+  % detect availability of parallel computing
+  if exist('matlabpool') == 5
+		matlabpool(num);
+	elseif exist('parpool') == 5
+		parpool(num);
+  end
   
   % parallel execution
   parfor d=1:length(results)
