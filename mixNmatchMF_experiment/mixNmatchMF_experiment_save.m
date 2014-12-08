@@ -1,6 +1,6 @@
 function [table] = mixNmatchMF_experiment_save(filepath, results, labels)
 	% check if table exists	
-	if exist(filepath, 'file') == 2
+	if exist(filepath, 'file') > 0
 		load(filepath);	
 	else
 		table = cell(length(labels), 1+4*6);

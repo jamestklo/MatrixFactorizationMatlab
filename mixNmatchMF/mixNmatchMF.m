@@ -36,7 +36,7 @@ function [Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memr
 			t_opt = t;
 			Uopt = U;
 			Vopt = V;
-			fprintf('mixNmatchMF(): t=%d\tf_opt=%1.16d\ttime=%1.16d\tmemry=%d\n', t_opt, f_opt, times(t_opt), memry(t_opt));
+			fprintf('mixNmatchMF(): t=%d\tf_opt=%1.16d\ttime=%1.16d\tmemry=%1.6d\n', t_opt, f_opt, times(t_opt), memry(t_opt));
 		end
 		
 		% check for acceptance or convergence
@@ -57,7 +57,7 @@ function [Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memr
 	times_999 = prctile(times, 99.9);
 	memry_avg = mean(memry);
 	memry_999 = prctile(memry, 99.9);
-	fprintf('mixNmatchMF(): t=%d\tf_opt=%1.16d\tf_all=%1.16d\ttimes_avg=%1.16d\ttimes_999=%1.16d\tmemry_avg=%1.16d\tmemry_999=%1.16d\n', t_opt, f_opt, f_all, times_avg, times_999, memry_avg, memry_999);
+	fprintf('mixNmatchMF(): t=%d\tf_opt=%1.16d\tf_all=%1.16d\ttimes_avg=%1.16d\ttimes_999=%5d\tmemry_avg=%1.6d\tmemry_999=%1.6d\n', t_opt, f_opt, f_all, times_avg, times_999, memry_avg, memry_999);
 end
 
 function [options] = mixNmatchMF_default(options)

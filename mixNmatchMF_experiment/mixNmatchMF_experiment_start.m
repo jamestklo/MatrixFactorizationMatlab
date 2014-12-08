@@ -1,4 +1,4 @@
-function [results, labels] = mixNmatchMF_experiment_start(data, num)
+function [results, labels] = mixNmatchMF_experiment_start(data)
   results = cell(length(data), 1);
   labels  = cell(length(data), 1);
 
@@ -29,9 +29,9 @@ function [measurements] = mixNmatchMF_experiment_gradients(options, optionsF, re
   addpath '../mixNmatchMF/';
 
   gradients = cell(4, 1);
-  gradients{1} = @mixNmatchMF_options_FullGD;
-  gradients{2} = @mixNmatchMF_options_StochasticGD; 
-  %gradients{3} = @mixNmatchMF_options_SAG0;
+  %gradients{1} = @mixNmatchMF_options_FullGD;
+  %gradients{2} = @mixNmatchMF_options_StochasticGD; 
+  gradients{3} = @mixNmatchMF_options_SAG0;
   %gradients{4} = @mixNmatchMF_options_SAGbuffered;
 
   measurements = cell(length(gradients), 1);
@@ -48,7 +48,7 @@ function [options] = mixNmatchMF_options_FullGD(options)
 	options.batchAt = @mixNmatchMF_batchAt_random;
 	options.batchSize = 0;
 	options.update = @mixNmatchMF_update_batch;
-	options.maxIter = options.maxIter / 10;
+	options.maxIter = max(options.maxIter / 10, 1);
 end
 
 
