@@ -5,7 +5,7 @@ function [f, gu, gv] = mixNmatchMF_objectiveAt_CLiMF(Y, U, V, i, j)
 % V	nDims x nCols matrix
 	[nRows, nCols] = size(Y);
 	[nRows, nDims] = size(U);
-
+ 
 	Yij = Y(i,j);
 	if Yij == 0
 		f  = 0;
