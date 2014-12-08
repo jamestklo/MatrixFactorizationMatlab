@@ -1,4 +1,4 @@
-function [U, V] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points, options, t)
+function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points, options, t)
 % U		a nRows x nDims matrix 
 % V		a nDims x nCols matrix
 % G_Ub	a cell of b 1 x nDims arrays
@@ -17,9 +17,11 @@ function [U, V] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points, options
     SAG_mode = 0;
     options.SAG_mode = SAG_mode;
   end
+  [nRows, nDims] = size(U);
+  [nDims, nCols] = size(V);
   if t == 1
-    options.SAG_Umemory = sparse(nRows*nCols, nDims);
-    options.SAG_Vmemory = sparse(nDims, nRows*nCols);
+    %options.SAG_Umemory = sparse(nRows*nCols, nDims);
+    %options.SAG_Vmemory = sparse(nDims, nRows*nCols);
     options.G_Umemory   = sparse(nRows, nDims);
     options.G_Vmemory   = sparse(nDims, nCols);
     for b=1:batchSize
@@ -29,8 +31,6 @@ function [U, V] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points, options
     end
   end
   if batchSize > 0
-    [nRows, nDims] = size(U);
-	  [nDims, nCols] = size(V);
     if (SAG_mode < 2) && (t == 1)
       options.SAG_U0 = U;
       options.SAG_V0 = V;      
@@ -42,12 +42,14 @@ function [U, V] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points, options
 	      point = points(b);
 	      [i, j] = position(point, nRows);
 	      % take the old one away, put the new one in
-        if (options.SAG_Umemory(point,:)) % if point exists in memory
+        if false && (options.SAG_Umemory(point,:)) % if point exists in memory
 	        options.G_Umemory(i,:) = options.G_Umemory(i,:) - options.SAG_Umemory(point,:) + G_Ub{b}; % 1 x nDims
 	        options.G_Vmemory(:,j) = options.G_Vmemory(:,j) - options.SAG_Vmemory(:,point) + G_Vb{b}; % nDims x 1
+          %options.SAG_Umemory(point,:) = G_Ub{b}; % 1 x nDims
+          %options.SAG_Vmemory(:,point) = G_Vb{b}; % nDims x 1
         elseif SAG_mode == 0 % re-compute the initial f, gu gv
           [o_f, o_gu, o_gv] = options.objectiveAt(M, options.SAG_U0, options.SAG_V0, i, j);
-          [r_f, r_gu, r_gv] = options.regularizeAt(options.lambda, options.SAG_U0, options.SAG_V0, i, j);
+          [r_f, r_gu, r_gv] = options.regularizeAt(options.SAG_U0, options.lambdaU, options.SAG_V0, options.lambdaV, i, j);
 	        options.G_Umemory(i,:) = options.G_Umemory(i,:) - o_gu - r_gu + G_Ub{b}; % 1 x nDims
 	        options.G_Vmemory(:,j) = options.G_Vmemory(:,j) - o_gv - r_gv + G_Vb{b}; % nDims x 1
         %elseif SAG_mode == 1
@@ -55,9 +57,7 @@ function [U, V] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points, options
 	        %options.G_Umemory(i,:) = options.G_Umemory(i,:) - ((options.SAG_V0)')*G(i,j) - r_gu + G_Ub{b}; % 1 x nDims
 	        %options.G_Vmemory(:,j) = options.G_Vmemory(:,j) - ((options.SAG_U0)')*G(i,j) - r_gv + G_Vb{b}; % nDims x 1          
         end
-        options.SAG_Umemory(point,:) = G_Ub{b}; % 1 x nDims
-	      options.SAG_Vmemory(:,point) = G_Vb{b}; % nDims x 1
-      end        
+      end
     end
     % stepSize < 0 for descent
     % stepSize > 0 for ascent

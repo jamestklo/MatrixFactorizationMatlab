@@ -13,7 +13,7 @@ function [] = mixNmatchMF_data_epinions2()
 	V = rand(nDims, nCols);
   fprintf('nnz=%d\tnRows=%d\tnCols%d\n', nnz(M), nRows, nCols);
 	tic;
-	f = mixNmatchMF_loss_L2(M, U, V)
+	f = mixNmatchMF_lossAll_L2(M, U, V)
 	toc;
 end
 

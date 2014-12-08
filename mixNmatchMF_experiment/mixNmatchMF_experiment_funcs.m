@@ -13,7 +13,7 @@ function [] = mixNmatchMF_experiment_funcs()
 
 	if true
 		options = struct;
-		options.maxIter = 5;		
+		options.maxIter = 5000;		
 		addpath '../mixNmatchMF_CLiMF/';
 		mixNmatchMF_experiment_datasets(@mixNmatchMF_options_CLiMF, './CLiMF.mat', options);
 		clear all;
@@ -23,8 +23,8 @@ function [] = mixNmatchMF_experiment_funcs()
 	if false
 		options = struct;
 		options.maxIter = 5000;		
-		addpath '../mixNmatchMF_MMMF';
-		mixNmatchMF_experiment_datasets(@mixNmatchMF_options_MMMF, './MMMF.mat', options);
+		addpath '../mixNmatchMF_BPR';
+		mixNmatchMF_experiment_datasets(@mixNmatchMF_options_MMMF, './BPR.mat', options);
 		clear all;
 		close all;
 	end	

@@ -20,7 +20,7 @@ function [data, table] = mixNmatchMF_experiment_datasets(optionsF, filepath, opt
 		data{d}{4} = @mixNmatchMF_data_digg;	
 	end
 
-	if false
+	if true
 		d = 3;
 		data{d} = cell(4,1);
 		data{d}{1} = 'IMDB'; 

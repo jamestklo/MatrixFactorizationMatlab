@@ -23,7 +23,7 @@ function [f, gu, gv] = mixNmatchMF_objectiveAt_CLiMF(Y, U, V, i, j)
 		nCols = length(Vj);
 		parfor k=1:nCols
 			Yik = Y(i,k);
-			if Yik ~= 0
+			if Yik ~= 0 && k ~= j
 				UiVk = Ui*V(:,k);
 				denominator = 1 - Yik*logistic(UiVk - UiVj);
 
