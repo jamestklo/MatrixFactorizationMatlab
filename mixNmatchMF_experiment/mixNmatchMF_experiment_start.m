@@ -33,13 +33,16 @@ function [measurements] = mixNmatchMF_experiment_gradients(options, optionsF, re
 
   gradients = cell(3, 1);
   %gradients{1} = @mixNmatchMF_options_FullGD;
-  gradients{2} = @mixNmatchMF_options_StochasticGD; 
+  %gradients{2} = @mixNmatchMF_options_StochasticGD; 
   gradients{3} = @mixNmatchMF_options_SAG;
+
+  U0 = rand(nRows, options.nDims);
+  V0 = rand(options.nDims, nCols);
 
   measurements = cell(length(gradients), 1);
   parfor g=1:length(gradients)
     if isa(gradients{g}, 'function_handle')
-      [f_all, t_opt, times_avg, times_999, memry_avg, memry_999] = mixNmatchMF_experiment_run(options, readData, optionsF, gradients{g});
+      [f_all, t_opt, times_avg, times_999, memry_avg, memry_999] = mixNmatchMF_experiment_run(options, readData, optionsF, gradients{g}, U0, V0);
       measurements{g} = [f_all, t_opt, times_avg, times_999, memry_avg, memry_999];
     end
   end
@@ -68,7 +71,7 @@ function [options] = mixNmatchMF_options_SAG(options)
 end
 
 
-function [f_all, t_opt, times_avg, times_999, memry_avg, memry_999] = mixNmatchMF_experiment_run(options, readData, optionsF, optionsU);
+function [f_all, t_opt, times_avg, times_999, memry_avg, memry_999] = mixNmatchMF_experiment_run(options, readData, optionsF, optionsU, U0, V0);
 	addpath '../mixNmatchMF/';
 	options.objective = @mixNmatchMF_objective_sparse;
 
@@ -79,7 +82,7 @@ function [f_all, t_opt, times_avg, times_999, memry_avg, memry_999] = mixNmatchM
 	[nRows, nCols] = size(M);
 
 	%f_all, t_opt, times_avg, times_999, memry_avg, memry_999
-	[Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memry_999] = mixNmatchMF(M, rand(nRows, options.nDims), rand(options.nDims, nCols), options);
+	[Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memry_999] = mixNmatchMF(M, U0, V0, options);
 
  	% free memory
   clear M;
