@@ -45,7 +45,7 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
     	options.SAG_Umemory = sparse(nDims, nRows*nCols);
     	options.SAG_Vmemory = sparse(nDims, nRows*nCols);
 
-    	for b=1:batchSize
+    	for b=1:SAG_nBufs
     		point = points(b);
       	options.SAG_Umemory(:,point) = transpose(G_Ub{b}); % 1 x nDim
       	options.SAG_Vmemory(:,point) = G_Vb{b}; % nDims x 1
