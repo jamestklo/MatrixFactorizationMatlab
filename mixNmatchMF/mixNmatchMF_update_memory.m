@@ -4,30 +4,28 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 % G_Ub	a cell of b 1 x nDims arrays
 % G_Vb	a cell of b nDims x 1 arrays
 % points array of points processed in the current batch
-% options.G_Umemory		nRows x nDims sparse matrix
-% options.G_Vmemory		nDims x nCols sparse matrix
-% options.SAG_U0        nRows x nDims sparse matrix, initial U matrix
-% options.SAG_V0        nDims x nCols sparse matrix, initial V matrix
-% options.SAG_Umemory   (nRows*nCols) x nDims sparse matrix
-% options.SAG_Vmemory   nDims x (nRows*nCols) sparse matrix
+% options.G_Umemory		nRows x nDims sparse matrix, most recent gradient
+% options.G_Vmemory		nDims x nCols sparse matrix, most recent gradient
+% options.SAG_U0			nRows x nDims sparse matrix, initial U matrix
+% options.SAG_V0			nDims x nCols sparse matrix, initial V matrix
+% options.SAG_Umemory	(nRows*nCols) x nDims sparse matrix, most recent gradient of a data point
+% options.SAG_Vmemory	nDims x (nRows*nCols) sparse matrix, most recent gradient of a data point
 
 	% default is to use zero buffer size
+	batchSize = length(points);
   if isfield(options, 'SAG_nBufs')
     SAG_nBufs = max(0, options.SAG_nBufs);
   else
-    SAG_nBufs = 0;
+    SAG_nBufs = batchSize;
     options.SAG_nBufs = SAG_nBufs;
   end
 
   [nRows, nDims] = size(U);
   [nDims, nCols] = size(V);
 
-  batchSize = length(points);
-  totalSize = nnz(M);
 	if t == 1
   	options.SAG_seen = sparse(nRows, nCols);
 
-  	% the most recent gradients
     options.G_Umemory = sparse(nRows, nDims);
     options.G_Vmemory = sparse(nDims, nCols);
     for b=1:batchSize
@@ -36,7 +34,7 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
       options.G_Vmemory(:,j) = options.G_Vmemory(:,j) + G_Vb{b}; % nDim x 1
     end
 
- 		if SAG_nBufs < totalSize
+ 		if SAG_nBufs < batchSize
     	options.SAG_U0 = U;
       options.SAG_V0 = V;
     end
@@ -45,6 +43,7 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
     	options.SAG_Umemory = sparse(nDims, nRows*nCols);
     	options.SAG_Vmemory = sparse(nDims, nRows*nCols);
 
+    	% predict ahead SAG_nBufs points
     	for b=1:SAG_nBufs
     		point = points(b);
       	options.SAG_Umemory(:,point) = transpose(G_Ub{b}); % 1 x nDim
@@ -59,17 +58,31 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 
   		isRecomputing = true;
   		if isa(options, 'SAG_Umemory') && isa(options, 'SAG_Vmemory')
-	    	if sum(options.SAG_Umemory(:,point)) ~= 0 || sum(options.SAG_Vmemory(:,point)) ~= 0
+  			SAG_UmemoryAt = options.SAG_Umemory(:,point);
+  			SAG_VmemoryAt = options.SAG_Vmemory(:,point);
+	    	if sum(SAG_UmemoryAt) ~= 0 || sum(SAG_VmemoryAt) ~= 0
 	    		isRecomputing = false;
-	      	options.G_Umemory(i,:) = options.G_Umemory(i,:) - transpose(options.SAG_Umemory(:,point)) + G_Ub{b}; % 1 x nDims
-	      	options.G_Vmemory(:,j) = options.G_Vmemory(:,j) - options.SAG_Vmemory(:,point) + G_Vb{b}; % nDims x 1
+	      	options.G_Umemory(i,:) = options.G_Umemory(i,:) - transpose(SAG_UmemoryAt) + G_Ub{b}; % 1 x nDims
+	      	options.G_Vmemory(:,j) = options.G_Vmemory(:,j) - SAG_VmemoryAt + G_Vb{b}; % nDims x 1
 	      end
-	      options.SAG_Umemory(:,point) = transpose(G_Ub{b}); % nDims x 1
-      	options.SAG_Vmemory(:,point) = G_Vb{b}; % nDims x 1
+	      if t <= SAG_nBufs
+	      	options.SAG_Umemory(:,point) = transpose(G_Ub{b}); % nDims x 1
+      		options.SAG_Vmemory(:,point) = G_Vb{b}; % nDims x 1
+      	else
+	      	options.SAG_Umemory(:,point) = zeros(nDims, 1); % nDims x 1
+      		options.SAG_Vmemory(:,point) = zeros(nDims, 1); % nDims x 1      		
+      	end
   		end
   		if isRecomputing
         [o_f, o_gu, o_gv] = options.objectiveAt(M, options.SAG_U0, options.SAG_V0, i, j);
-        [r_f, r_gu, r_gv] = options.regularizeAt(options.SAG_U0, options.lambdaU, options.SAG_V0, options.lambdaV, i, j);
+        % if regularizer is a function
+    		if options.lambdaU ~= 0 || options.lambdaV ~= 0
+      		[r_f, r_gu, r_gv] = options.regularizeAt(options.SAG_U0, options.lambdaU, options.SAG_V0, options.lambdaV, i, j);
+      	else
+      		r_f = 0;
+      		r_gu = 0;
+      		r_gv = 0;
+    		end
 	      options.G_Umemory(i,:) = options.G_Umemory(i,:) - o_gu - r_gu + G_Ub{b}; % 1 x nDims
 	      options.G_Vmemory(:,j) = options.G_Vmemory(:,j) - o_gv - r_gv + G_Vb{b}; % nDims x 1
   		end
