@@ -1,6 +1,6 @@
-function [M] = mixNmatchMF_data_digg()
-	load '../mixNmatchMF_mat/digg12month1.mat';
-	M = mixNmatchMF_data_subDim(Problem.A, 1000, 1000, 1, 1);
-	size(M)
-	nnz(M)
+function [subA] = mixNmatchMF_data_digg()
+	load '../mixNmatchMF_mat/subset_digg12month1.mat';
+	% Problem.A(1:500, 1:500);
+	size(subA)
+	nnz(subA)
 end

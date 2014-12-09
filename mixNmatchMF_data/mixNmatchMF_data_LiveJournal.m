@@ -1,5 +1,6 @@
-function [ljournal] = mixNmatchMF_data_digg()
+function [subA] = mixNmatchMF_data_LiveJournal()
 	load '../mixNmatchMF_mat/subset_ljournal-2008.mat';
-	size(ljournal)
-	nnz(ljournal)
+	% Problem.A(1:5000, 1:5000);
+	size(subA)
+	nnz(subA)
 end

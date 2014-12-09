@@ -5,6 +5,6 @@ function [options] = mixNmatchMF_options_BPR(options)
 	addpath '../mixNmatchMF_L2/';
 	options.regularizeAt = @mixNmatchMF_regularizeAt_L2;
 
-	addpath '../mixNmatchMF_data/';
+	addpath '../mixNmatchMF/';
 	options = mixNmatchMF_options_descent(options);
 end

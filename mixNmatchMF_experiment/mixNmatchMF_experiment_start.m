@@ -12,7 +12,6 @@ function [results, labels] = mixNmatchMF_experiment_start(data)
 
   
   % parallel execution
-  size(data)
   parfor d=1:length(results)
     if length(data{d}) > 0
      	labels{d}  = data{d}{1};
