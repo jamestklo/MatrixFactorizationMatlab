@@ -77,6 +77,7 @@ function [f_all, t_opt, times_avg, times_999, memry_avg, memry_999] = mixNmatchM
 
 	M = readData();
   [nRows, nCols] = size(M);
+  rng(1);
 	%f_all, t_opt, times_avg, times_999, memry_avg, memry_999
 	[Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memry_999] = mixNmatchMF(M, rand(nRows, options.nDims), rand(options.nDims, nCols), options);
 
