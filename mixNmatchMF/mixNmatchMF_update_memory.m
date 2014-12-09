@@ -16,7 +16,7 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
   if isfield(options, 'SAG_nBufs')
     SAG_nBufs = max(0, options.SAG_nBufs);
   else
-    SAG_nBufs = batchSize;
+    SAG_nBufs = 0;
     options.SAG_nBufs = SAG_nBufs;
   end
 
