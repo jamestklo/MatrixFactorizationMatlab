@@ -23,8 +23,8 @@ function [] = mixNmatchMF_experiment_funcs()
 	if true
 		options = struct;
 		options.maxIter = 5000;		
-		addpath '../mixNmatchMF_BPR';
-		mixNmatchMF_experiment_datasets(@mixNmatchMF_options_MMMF, './BPR.mat', options);
+		addpath '../mixNmatchMF_BPR/';
+		mixNmatchMF_experiment_datasets(@mixNmatchMF_options_BPR, './BPR.mat', options);
 		clear all;
 		close all;
 	end
