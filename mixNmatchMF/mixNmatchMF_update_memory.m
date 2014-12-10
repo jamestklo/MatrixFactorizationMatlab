@@ -24,7 +24,7 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
   [nDims, nCols] = size(V);
 
 	if t == 1
-  	options.SAG_seen = sparse(nRows, nCols);
+  	%options.SAG_seen = sparse(nRows, nCols);
 
     options.G_Umemory = sparse(nRows, nDims);
     options.G_Vmemory = sparse(nDims, nCols);
@@ -54,7 +54,7 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
   	for b=1:batchSize
   		point = points(b);
   		[i, j] = position(point, nRows);
-  		options.SAG_seen(point) = t;
+  		%options.SAG_seen(point) = t;
 
   		isRecomputing = true;
   		if isa(options, 'SAG_Umemory') && isa(options, 'SAG_Vmemory')
@@ -91,11 +91,10 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 
 	% stepSize < 0 for descent
   % stepSize > 0 for ascent
-	if t == 1
-  	stepSize = options.stepSize/batchSize;
-  else
-    stepSize = options.stepSize/nnz(options.SAG_seen);
-  end
+	%if t > 1
+    %stepSize = options.stepSize/nnz(options.SAG_seen);
+  %end
+  stepSize = stepSize/nnz(M);
   U = U + stepSize*(options.G_Umemory);
   V = V + stepSize*(options.G_Vmemory);  
 end
