@@ -13,6 +13,7 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 
 	% default is to use zero buffer size
 	batchSize = length(points);
+  totalSize = batchSize;
   if isfield(options, 'SAG_nBufs')
     SAG_nBufs = max(-1, options.SAG_nBufs);
   else
@@ -22,10 +23,8 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 
   [nRows, nDims] = size(U);
   [nDims, nCols] = size(V);
-
 	if t == 1
   	%options.SAG_seen = sparse(nRows, nCols);
-
     options.G_Umemory = sparse(nRows, nDims);
     options.G_Vmemory = sparse(nDims, nCols);
     for b=1:batchSize
@@ -68,10 +67,11 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 	      if t <= SAG_nBufs
 	      	options.SAG_Umemory(:,point) = transpose(G_Ub{b}); % nDims x 1
       		options.SAG_Vmemory(:,point) = G_Vb{b}; % nDims x 1
-      	else
+      	else % reset 
 	      	options.SAG_Umemory(:,point) = zeros(nDims, 1); % nDims x 1
-      		options.SAG_Vmemory(:,point) = zeros(nDims, 1); % nDims x 1      		
+      		options.SAG_Vmemory(:,point) = zeros(nDims, 1); % nDims x 1   		
       	end
+        totalSize = SAG_nBufs;
   		end
   		if isRecomputing 
         if isfield(options, 'SAG_U0') && isfield(options, 'SAG_V0')
@@ -86,9 +86,11 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
     		  end
           options.G_Umemory(i,:) = options.G_Umemory(i,:) - o_gu - r_gu + G_Ub{b}; % 1 x nDims
           options.G_Vmemory(:,j) = options.G_Vmemory(:,j) - o_gv - r_gv + G_Vb{b}; % nDims x 1
+          totalSize = nnz(M);
   		  else
           options.G_Umemory(i,:) = options.G_Umemory(i,:) + G_Ub{b}; % 1 x nDims
-          options.G_Vmemory(:,j) = options.G_Vmemory(:,j) + G_Vb{b}; % nDims x 1        
+          options.G_Vmemory(:,j) = options.G_Vmemory(:,j) + G_Vb{b}; % nDims x 1 
+          totalSize = t;
         end
       end
     end
@@ -101,7 +103,7 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
   %else
     %stepSize = options.stepSize/nnz(options.SAG_seen);
   %end
-  stepSize = options.stepSize / nnz(M);
+  stepSize = options.stepSize / totalSize;
   U = U + stepSize*(options.G_Umemory);
   V = V + stepSize*(options.G_Vmemory);  
 end
