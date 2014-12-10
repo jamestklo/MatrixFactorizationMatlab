@@ -101,7 +101,7 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
   %else
     %stepSize = options.stepSize/nnz(options.SAG_seen);
   %end
-  stepSize = stepSize / nnz(M);
+  stepSize = options.stepSize / nnz(M);
   U = U + stepSize*(options.G_Umemory);
   V = V + stepSize*(options.G_Vmemory);  
 end
