@@ -2,7 +2,7 @@ function [] = mixNmatchMF_experiment_funcs()
 	clear all;
 	close all;
 	
-	if false
+	if true
 		options = struct;
 		options.maxIter = 5000;
 		addpath '../mixNmatchMF_L2';
@@ -20,7 +20,7 @@ function [] = mixNmatchMF_experiment_funcs()
 		close all;
 	end
 
-	if false
+	if true
 		options = struct;
 		options.maxIter = 5000;		
 		addpath '../mixNmatchMF_BPR/';

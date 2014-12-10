@@ -33,7 +33,7 @@ function [measurements] = mixNmatchMF_experiment_gradients(options, optionsF, re
 
   gradients = cell(3, 1);
   %gradients{1} = @mixNmatchMF_options_FullGD;
-  %gradients{2} = @mixNmatchMF_options_StochasticGD; 
+  gradients{2} = @mixNmatchMF_options_StochasticGD; 
   gradients{3} = @mixNmatchMF_options_SAG;
 
   measurements = cell(length(gradients), 1);
@@ -76,8 +76,8 @@ function [f_all, t_opt, times_avg, times_999, memry_avg, memry_999] = mixNmatchM
 	[options] = optionsU(options);
 
 	M = readData();
-  [nRows, nCols] = size(M);
-  rng(1);
+    [nRows, nCols] = size(M);
+    rng(1);  % fix random seed
 	%f_all, t_opt, times_avg, times_999, memry_avg, memry_999
 	[Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memry_999] = mixNmatchMF(M, rand(nRows, options.nDims), rand(options.nDims, nCols), options);
 
