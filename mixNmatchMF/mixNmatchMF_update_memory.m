@@ -14,9 +14,9 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 	% default is to use zero buffer size
 	batchSize = length(points);
   if isfield(options, 'SAG_nBufs')
-    SAG_nBufs = max(0, options.SAG_nBufs);
+    SAG_nBufs = max(-1, options.SAG_nBufs);
   else
-    SAG_nBufs = 0;
+    SAG_nBufs = -1;
     options.SAG_nBufs = SAG_nBufs;
   end
 
@@ -34,7 +34,7 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
       options.G_Vmemory(:,j) = options.G_Vmemory(:,j) + G_Vb{b}; % nDim x 1
     end
 
- 		if SAG_nBufs < batchSize
+ 		if SAG_nBufs >= 0 && SAG_nBufs < batchSize
     	options.SAG_U0 = U;
       options.SAG_V0 = V;
     end
@@ -57,7 +57,7 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
   		%options.SAG_seen(point) = t;
 
   		isRecomputing = true;
-  		if isa(options, 'SAG_Umemory') && isa(options, 'SAG_Vmemory')
+  		if isfield(options, 'SAG_Umemory') && isfield(options, 'SAG_Vmemory')
   			SAG_UmemoryAt = options.SAG_Umemory(:,point);
   			SAG_VmemoryAt = options.SAG_Vmemory(:,point);
 	    	if sum(SAG_UmemoryAt) ~= 0 || sum(SAG_VmemoryAt) ~= 0
@@ -73,19 +73,24 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
       		options.SAG_Vmemory(:,point) = zeros(nDims, 1); % nDims x 1      		
       	end
   		end
-  		if isRecomputing
-        [o_f, o_gu, o_gv] = options.objectiveAt(M, options.SAG_U0, options.SAG_V0, i, j);
-        % if regularizer is a function
-    		if options.lambdaU ~= 0 || options.lambdaV ~= 0
-      		[r_f, r_gu, r_gv] = options.regularizeAt(options.SAG_U0, options.lambdaU, options.SAG_V0, options.lambdaV, i, j);
-      	else
-      		r_f = 0;
-      		r_gu = 0;
-      		r_gv = 0;
-    		end
-	      options.G_Umemory(i,:) = options.G_Umemory(i,:) - o_gu - r_gu + G_Ub{b}; % 1 x nDims
-	      options.G_Vmemory(:,j) = options.G_Vmemory(:,j) - o_gv - r_gv + G_Vb{b}; % nDims x 1
-  		end
+  		if isRecomputing 
+        if isfield(options, 'SAG_U0') && isfield(options, 'SAG_V0')
+          [o_f, o_gu, o_gv] = options.objectiveAt(M, options.SAG_U0, options.SAG_V0, i, j);
+          % if regularizer is a function
+    		  if options.lambdaU ~= 0 || options.lambdaV ~= 0
+      		  [r_f, r_gu, r_gv] = options.regularizeAt(options.SAG_U0, options.lambdaU, options.SAG_V0, options.lambdaV, i, j);
+          else
+      		  r_f = 0;
+      		  r_gu = 0;
+      		  r_gv = 0;
+    		  end
+          options.G_Umemory(i,:) = options.G_Umemory(i,:) - o_gu - r_gu + G_Ub{b}; % 1 x nDims
+          options.G_Vmemory(:,j) = options.G_Vmemory(:,j) - o_gv - r_gv + G_Vb{b}; % nDims x 1
+  		  else
+          options.G_Umemory(i,:) = options.G_Umemory(i,:) + G_Ub{b}; % 1 x nDims
+          options.G_Vmemory(:,j) = options.G_Vmemory(:,j) + G_Vb{b}; % nDims x 1        
+        end
+      end
     end
   end
 

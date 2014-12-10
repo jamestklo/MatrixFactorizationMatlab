@@ -4,7 +4,8 @@ function [points] = mixNmatchMF_batchAt_random(M, options, t)
     batchSize = options.batchSize;
     if (batchSize < 0) 
       if t == 1
-        batchSize = totalSize;
+        %batchSize = totalSize;
+        batchSize = -batchSize;
       else
         batchSize = -batchSize;
       end
