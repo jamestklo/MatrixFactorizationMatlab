@@ -2,7 +2,7 @@ function [data, table] = mixNmatchMF_experiment_datasets(optionsF, filepath, opt
 	data = cell(5,1);
 	addpath '../mixNmatchMF_data/';
 
-	if true
+	if false
 		d = 1;
 		data{d} = cell(4,1);
 		data{d}{1} = 'epinions'; 
@@ -20,7 +20,7 @@ function [data, table] = mixNmatchMF_experiment_datasets(optionsF, filepath, opt
 		data{d}{4} = @mixNmatchMF_data_digg;	
 	end
 
-	if true
+	if false
 		d = 3;
 		data{d} = cell(4,1);
 		data{d}{1} = 'IMDB'; 
@@ -29,7 +29,7 @@ function [data, table] = mixNmatchMF_experiment_datasets(optionsF, filepath, opt
 		data{d}{4} = @mixNmatchMF_data_IMDB;	
 	end
 
-	if true
+	if false
 		d = 4;
 		data{d} = cell(4,1);
 		data{d}{1} = 'LiveJournal'; 
@@ -38,7 +38,7 @@ function [data, table] = mixNmatchMF_experiment_datasets(optionsF, filepath, opt
 		data{d}{4} = @mixNmatchMF_data_LiveJournal;	
 	end
 
-	if true
+	if false
 		d = 5;
 		data{d} = cell(4,1);
 		data{d}{1} = 'Wikipedia'; 
@@ -46,7 +46,6 @@ function [data, table] = mixNmatchMF_experiment_datasets(optionsF, filepath, opt
 		data{d}{3} = optionsF; 
 		data{d}{4} = @mixNmatchMF_data_Wikipedia;	
 	end
-
 
 	% start experiment
 	addpath '../mixNmatchMF_experiment/';

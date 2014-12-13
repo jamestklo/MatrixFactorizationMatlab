@@ -7,7 +7,6 @@ function [table] = mixNmatchMF_experiment_save(filepath, results, labels)
 	end
 	
 	% else create new table, set up rows
-
 	tRows = length(labels);
 	for i=1:tRows
 		row = results{i};

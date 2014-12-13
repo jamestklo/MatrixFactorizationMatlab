@@ -19,7 +19,7 @@ function [points] = mixNmatchMF_batchAt_random(M, options, t)
   if (batchSize ~= 0) && (batchSize < totalSize)
     % randomly select batchSize points from non-zero entries
     % sample without replacement
-    maxSwaps = min(batchSize, round(totalSize/2));
+    maxSwaps = min(batchSize, totalSize);
     for b=1:maxSwaps
       swap = ceil(totalSize*rand(1));
       temp = points(b);

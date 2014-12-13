@@ -50,8 +50,8 @@ function [Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memr
 		%else
 			%f_prev = f;
 		%end
-	end
-	f_all = objectiveAll(M, Uopt, Vopt);
+    end
+    f_all = objectiveAll(M, Uopt, Vopt);
 	%times_tot = sum(times(1:t_opt));
 	times_avg = mean(times);
 	times_999 = prctile(times, 99.9);
