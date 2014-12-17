@@ -1,0 +1,20 @@
+mixNmatchMF_options_L2
+
+ans =
+
+     5363260     5363260
+
+
+ans =
+
+    79023142
+
+mixNmatchMF(): t=1	f_opt=3.8103507388257440e-01	time=1.7034650859311418e+00	memry=002858
+mixNmatchMF(): t=2	f_opt=4.0492361618000216e-03	time=1.4282255077562638e+00	memry=002858
+mixNmatchMF(): t=13	f_opt=3.1515415806626737e-03	time=1.4209410500952235e+00	memry=002858
+mixNmatchMF(): t=20	f_opt=2.5829367017787715e-03	time=1.4232889942274574e+00	memry=002858
+mixNmatchMF(): t=115	f_opt=2.4042195063456464e-03	time=1.4555418133618470e+00	memry=002858
+mixNmatchMF(): t=1343	f_opt=2.3855981001471827e-03	time=1.4750148029706134e+00	memry=002858
+mixNmatchMF(): t=1445	f_opt=2.3155669510951317e-03	time=1.4521270698494901e+00	memry=002858
+mixNmatchMF(): t=3140	f_opt=2.1126633632528430e-03	time=1.4469018881281408e+00	memry=002858
+Operation terminated by user during mixNmatchMF_lossAt_L2 (line 4)

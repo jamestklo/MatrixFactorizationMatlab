@@ -17,6 +17,7 @@
 \usetikzlibrary{patterns}
 \usepackage{pgfplots}
 \usepackage{comment}
+\usepackage{amsmath}
 
 \clubpenalty=10000
 \widowpenalty = 10000
@@ -96,7 +97,8 @@
 % --- End of Author Metadata ---
 
 
-\title{{\ttlit ConcolicDOM:} Concolic Generation of DOM Structures for Unit Testing JavaScript}
+%\title{Prototyping Recommender Systems using {\ttlit SAG-recomputed}}
+\title{Prototyping Recommender Systems using Stochastic Average Gradient}
 \numberofauthors{3} 
 \author{
 \alignauthor
@@ -105,52 +107,27 @@ James Lo\\
        \affaddr{University of British Columbia}\\	   
        \affaddr{Vancouver, Canada}\\
        \email{tklo@cs.ubc.ca}
-\alignauthor
-Eric Wohlstadter\\
-       \affaddr{Computer Science}\\
-       \affaddr{University of British Columbia}\\	   
-       \affaddr{Vancouver, Canada}\\
-       \email{wohlstad@cs.ubc.ca}
-\alignauthor
-Ali Mesbah\\
-       \affaddr{Elec. and Comp. Engineering}\\
-       \affaddr{University of British Columbia}\\	   
-       \affaddr{Vancouver, Canada}\\
-       \email{amesbah@ece.ubc.ca}
 }
 %\date{24 January 2014}
 
 \maketitle
 \begin{abstract}
-%As Web applications become more prevalent in our daily lives, quality assurance of Web applications has also become more important.  
-Considerable JavaScript code is written to access and update a Web application's user interface through the Document Object Model API.  
-The DOM models the UI in a tree structure.  
-In this paper we present our generic and browser independent approach for concolic generation of DOM trees for testing JavaScript Web applications.
-Testing Web applications remains a challenge because executing different parts of JavaScript code requires different yet specifically precise DOM tree structures.
-If there is any mismatch between the code and the DOM, e.g. when a DOM operation fails, entire code execution would eventually halt and the test would terminate prematurely.  
-To overcome these challenges, we apply concolic techniques to generate HTML.  
-We designed a DOM solver to support the 2D structure of the DOM tree, to infer implicit clues from DOM operations that are partial and incomplete, and to tailor the DOM tree for targeting precise subsets of the code base.  
-We also implemented an end to end automatic system from deducing constraints to generating HTML and driving test execution because the number of unique DOM trees can grow as exponentially as the number of execution paths.
-We conducted a case study on the DOMtris application in which we will show how our approach significantly improves path coverage that includes a part of JavaScript code that implements a core functionality of the application.
 \end{abstract}
 
 % A category with only the three required fields
-\category{D.2.5}{Software Engineering}{Testing and Debugging}%[Symbolic execution, Test coverage of code, Test execution]
+\category{H.3.3}{Information Storage and Retrieval}{Information Search and Retrieval}[Information Filtering]
 %A category including the fourth, optional field follows...
 %\category{D.3.2}{Software}{Programming Languages}[JavaScript]
 
-\terms{Design, Algorithms, Experimentation}
+\terms{Asymptotic Time Complexity, Asymptotic Space Complexity, Experimentation}
 
-\keywords{Testing, concolic execution, DOM, JavaScript}
+\keywords{Recommender systems, collaborative filtering, matrix factorization, stochastic gradient}
 
 \input{introduction}
-\input{challenges}
-\input{approach}
-\input{solver}
-\input{impl}
-\input{evaluation}
-%\input{future}
-\input{related}
+\input{background}
+%\input{related}
+%\input{challenges}
+%\input{approach}
 \input{conclusion}
 
 \bibliographystyle{abbrv}  

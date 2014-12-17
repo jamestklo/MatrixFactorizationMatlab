@@ -1,0 +1,24 @@
+\section{Background and Terminology}
+To motivate our paper and the space complexity challenge, we first introduce the background and the terminology that we use.  
+
+
+\header{Matrix Factorization}
+Model-based recommender systems approximate the \emph{user-item} matrix \emph{A} through the dot-product of the \emph{user}-matrix \emph{U} and the \emph{item}-matrix \emph{V}: $\hat{A} = U * V.$  
+
+The \emph{user-item} matrix \emph{A} is a \emph{nRows}-by-\emph{nCols} matrix.  
+Similarly, the approximation matrix $\hat{A}$ also has \emph{nRows} rows, and \emph{nCols} columns.  
+
+The \emph{user} matrix \emph{U} is \emph{nRows}-by-\emph{nDims}: \emph{U} has \emph{nRows} rows, and \emph{nDims} columns.  
+\emph{nDims} is the number of latent dimensions.  
+The \emph{item} matrix \emph{V} is \emph{nDims}-by-\emph{nCols}.  
+
+
+\header{Optimizing an Objective Function}
+When trying to find a suitable \emph{user} matrix \emph{U} and a suitable \emph{item} matrix \emph{V}, 
+many model-based recommender systems optimize an objective function with respect to \emph{U} and \emph{V}: 
+\[ 
+\operatorname*{arg\,min (or\,arg\,max)}_{U,V} \left[ f(U, V) = \sum_{i=1}^{nRows} \sum_{j=1}^{nCols} f(\bar{u}_{i}, \bar{v}_{j}) \right]
+\]
+
+When we take the gradient of the objective function with respect to a row in \emph{U} (e.g. $\bar{u}_{i}$), 
+we sum up the gradient of all the entries in $\hat{A}$ that belong to $\bar{u}_{i}$.  

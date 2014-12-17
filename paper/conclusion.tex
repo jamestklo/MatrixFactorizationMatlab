@@ -1,13 +1,21 @@
 \section{Future Work \& Conclusion}
-This paper is the first in the series of our study on data scientists prototyping model-based recommender systems.
-We explored the convex-optimization perspective of the problem; and we propose Stochastic Average Gradient as a viable alternative to Full Deterministic Gradient and Stochastic Gradient.
-In theory, we proved that our extension and adaptation of SAG has asymptotic time complexity and asymptotic space complexity as efficient as stochastic gradient.
-In practice, through extensive evaluation we demonstrated that, even before any fine-tuning or optimization of the implementation, our SAG-MF algorithm still outperforms both Full Deterministic Gradient and Stochastic Gradient in terms of convergence.
+This paper is the first in the series of our study on data scientists prototyping model-based recommender systems.  
+We explored the convex-optimization perspective of the problem; and we propose Stochastic Average Gradient as a viable alternative to Full Deterministic Gradient and Stochastic Gradient.  
+In theory, we proved that our extension and adaptation of \emph{SAG} has asymptotic time complexity and asymptotic space complexity as efficient as stochastic gradient.  
+In practice, through extensive evaluation we demonstrated that, even without any fine-tuning or optimization of the implementation, 
+\tool still outperforms both Full Deterministic Gradient and Stochastic Gradient in terms of faster convergence.
+
 % the recommender perspective 
-In the future, we aim to complete our ongoing work on the metrics perspective and on the software engineering perspective.  
-Given a dataset, the quality of a recommender system is often evaluated in various metrics: e.g. precision, recall, area under curve, reciprocal rank, NDCG, and variants of the above such as top-K precision and top-K hit rate.
+In the future, we also aim to complete our ongoing work on the metrics perspective and on the software engineering perspective.  
+Given a dataset, the quality of a recommender system is often evaluated in various metrics: 
+e.g. precision, recall, area under curve, reciprocal rank, NDCG, and variants of the above such as top-K precision and top-K hit rate.
 % what is NDCG?
 Many papers in the literature claim their objective function is better by illustrating that their objective function performs in some of these metrics better than other objective functions.  
-Therefore, in the metrics perspective, we are exploring and investigating which factors are more relevant and important to scoring high in the various metrics: is it the objective function, is it the method for convex-optimization such as SAG, is it other fine-tuning mechanisms such as bootstrapping, or is it the hyper parameters that we use in convex-optimization but which can also be specific to the dataset?
+Therefore, in the metrics perspective, we are exploring and investigating which factors are more relevant and important towards scoring high in the various metrics: 
+is it the objective function, the method for convex-optimization such as \emph{SAG}, other fine-tuning mechanisms such as bootstrapping, 
+or the hyper parameters that we use in convex-optimization but which can also be specific to the dataset. 
 % the software engineering perspective 
-In the software engineering perspective, we are studying how to increase the productivity of data scientists.  At this point, we are designing and developing a mix-n-match and plug-n-play framework that enables data scientists would make it quick to prototype and experiment different combinations objective functions, datasets, gradient methods, hyper parameters and evaluation metrics.  
+
+In the software engineering perspective, we are studying how to increase the productivity of data scientists.  
+At this point, we are designing and developing a \emph{mix-n-match} or \emph{plug-n-play} framework that enables data scientists to very rapidly prototype and 
+experiment different combinations of objective functions, datasets, gradient methods, hyper parameters and evaluation metrics.  
