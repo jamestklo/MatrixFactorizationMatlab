@@ -1,4 +1,6 @@
 \section{Approach}
+At a high level, our approach adapts SAG into Matrix Factorization.
+
 %Given a piece of JavaScript code, and a path that we intend the code execution to follow,  our goal is to generate a DOM tree to guide and support the code execution.  
 
 At a high-level, our approach concolically generates DOM trees to achieve path coverage. We first instrument the \js code to trace the execution. Next, we identify dynamic backward slices of DOM operations and deduce DOM-specific constraints from the slices. Then, We feed these constraints into a DOM-aware solver for generating the expected DOM structure. 

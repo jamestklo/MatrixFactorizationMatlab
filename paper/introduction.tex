@@ -1,36 +1,42 @@
 \section{Introduction}
-%Why RecSys
+% Why RecSys
 Shopping, text or display advertising, renting movies, listening to music… recommender systems are prevalent and ubiquitous in our daily lives.  
-%Why Matrix Factorization
-Matrix factorization (\emph{MF})is an important technique in model-based recommender systems.
-The NetFlix Prize competition has shown that MF is superior to the classic nearest neighbour technique in product recommendations \cite{koren2009matrix}.
-MF has been utilized extensively in past research for handling both explicit \cite{mmmf2005fast, mnar, gapfm} ratings, and implicit \cite{wrmf2008hu, wrmf2008pan, climf, bpr, mnar} feedback.
+% Why Matrix Factorization  
+Matrix factorization (\emph{MF}) is a popular technique in model-based recommender systems.  
+Indeed, MF has been utilized extensively in past research for handling both explicit \cite{mmmf2005fast, mnar, gapfm} ratings, 
+and implicit \cite{wrmf2008hu, wrmf2008pan, climf, bpr, mnar} feedback.  
 
-% Pitfalls with FG and SG
-In recommender systems that utilize matrix factorization, all of them optimize an objective function.  
-Moreover, all of the recommender systems that we mentioned utilize either of the following 2 main gradient methods for optimization: full deterministic gradient (\emph{FG}) \cite{mmmf2005fast, wrmf2008hu, wrmf2008pan, mnar}, or stochastic gradient (\emph{SG}) \cite{gapfm, climf, bpr}.
-However, both FG and SG have pitfalls.  
+% Pitfalls with FG and SG  
+In recommender systems that utilize matrix factorization, most optimize an objective function.  
+Full deterministic gradient \emph{FG} and stochastic gradient \emph{SG} are the two main gradient methods for optimization.  
+All of the recommender systems that we mentioned utilize one of \emph{FG} or \emph{SG}.  
+However, both full deterministic gradient and stochastic gradient have pitfalls when it comes to prototyping recommender systems.  
 
-%Why SAG in prototyping model-based recommender systems
+Full deterministic gradient can offer high quality optimizations.  
+However, FG is slow because in each iteration of optimization, FG has to pass through all the samples in the dataset.  
+Stochastic gradient is relatively fast; iteration cost is low because each iteration of SG looks at only one or a few samples.  
+However, the trade-off with SG is that it often provides relatively low quality optimizations.  
 
+High quality optimizations with a low iteration cost is important when building recommender systems.  
+The first reason is that data scientists often have to run repeated experiments: e.g. with different objective functions, different metrics, different datasets, and different optimization parameters.  
+The second reason is that product life cycles are shortening in the age of agile software engineering.  
+Thus data scientists are often faced with the challenge of running more experiments and producing high quality results with less time.  
+
+%Why SAG in prototyping model-based recommender systems  
+In this paper, we study the challenge from the perspective of convex-optimization.  
+We propose using the stochastic average gradient \emph{SAG} method \cite{schmidt2013minimizing, roux2012stochastic} as a viable alternative to using \emph{FG} and \emph{SG} during the prototyping process.  
+\emph{SAG} has the distinctive advantage that its optimization quality is proven to be much better than \emph{SG}; at the same time \emph{SAG}'s iteration cost is asymptotically identical to \emph{SG}.  
+However, adapting \emph{SAG} to matrix factorization is difficult because \emph{SAG} requires previously-computed gradients and storing these gradients can lead to very high asymptotically space complexity.  
+We explore the challenge with space-complexity, and addresses it by proposing a re-computation approach \tool that re-computes the previously-computed gradients.  
+Our re-computation approach preserves the low iteration cost of \emph{SAG}.  
+The asymptotic space complexity of our \tool approach is as efficient as the memory-less full deterministic gradient, and stochastic gradient.  
 
 To the best of our knowledge, we are the first to
 \begin{compactitem}
-\item Identify the pitfalls associated with using full deterministic gradient and stochastic gradient when data scientists prototype model-based recommender systems.
-\item Propose Stochastic Average Gradient (SAG) as a viable alternative for yielding better and faster convergence in optimizing objective functions.
-\item Extend SAG into SAG-MF, and resolve the space complexity challenge in adapting SAG from the domain of supervised machine learning into matrix factorization.
-\item Prove in theory, that SAG-MF has identical asymptotic time complexity and identical asymptotic space complexity as Stochastic Gradient.
-\item Extensively evaluate and compare SAG-MF across multiple RecSys objective functions and diverse datasets.
-\item Demonstrate in practice that, even before optimization, SAG-MF still yields faster, better convergence despite the additional time of re-computation, and that SAG-MF uses memory at a level similar to stochastic gradient.  
+\item Identify the pitfalls associated with using full deterministic gradient and stochastic gradient when data-scientists prototype model-based recommender systems.  
+\item Propose Stochastic Average Gradient (\emph{SAG}) as a viable alternative for yielding faster convergence in the convex-optimization of matrix factorization.  
+\item Extend SAG into \tool for matrix factorization, resolve the space complexity challenge in adapting SAG from the domain of large-scale supervised-machine-learning into the domain of prototyping recommender objective-functions.  
+\item Prove in theory, that our \tool approach has identical asymptotic time complexity and identical asymptotic space complexity as stochastic gradient.  
+\item Extensively evaluate and compare SAG-MF across multiple RecSys objective functions and diverse datasets.  
+\item Demonstrate in practice that, even before any optimization of the implementation, our SAG-MF algorithm still yields faster convergence despite the additional time of re-computation, and that SAG-MF uses memory at a level similar to stochastic gradient.  
 \end {compactitem}
-
-
-\begin{comment}
-
-1. JavaScript interacts with the DOM and DOM-related \javascript faults are prevalent 
-2. Unit testing JavaScript functions required the DOM as input, not any DOM but the DOM in a specific structure
-3. Other techniques only focus on input values to functions and ignore the DOM
-4. Our technique addresses this important issue by...
-5. Our contributions are... our results show that...
-
-\end{comment}
