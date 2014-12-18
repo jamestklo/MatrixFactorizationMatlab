@@ -2,38 +2,107 @@
 To motivate our paper and the space complexity challenge, we first introduce the background and the terminology that we use.  
 
 
-\header{Matrix Factorization}
+\header{Matrix Factorization.}
 Model-based recommender systems approximate the \emph{user-item} matrix \emph{A} through 
 the dot-product of the \emph{user}-matrix \emph{U} and the \emph{item}-matrix \emph{V}: $\hat{A} = U * V.$  
 
-The \emph{user-item} matrix \emph{A} is a \emph{nRows}-by-\emph{nCols} matrix.  
-Similarly, the approximation matrix $\hat{A}$ also has \emph{nRows} rows, and \emph{nCols} columns.  
+The \emph{user-item} matrix \emph{A} is a \emph{nRows}-by-\emph{nCols} matrix.
+\emph{A} can be \emph{sparse}; thus we use \emph{N} to indicate the number of non-zero entries in \emph{A}.
+
+The approximation matrix $\hat{A}$ also has \emph{nRows} rows, and \emph{nCols} columns.  
+$\hat{A}$ is not a sparse matrix.  The goal of model-based recommendation is to use the non-zero entries to approximate the missing entries in \emph{A}. 
 
 The \emph{user} matrix \emph{U} is \emph{nRows}-by-\emph{nDims}: \emph{U} has \emph{nRows} rows, and \emph{nDims} columns.  
 \emph{nDims} is the number of latent dimensions.  
 The \emph{item} matrix \emph{V} is \emph{nDims}-by-\emph{nCols}.  
 
 
-\header{Optimizing an Objective Function}
+\header{Optimizing an Objective Function.}
 The goal of matrix factorization is to find the best \emph{U} and the best \emph{V} whose dot product optimizes an objective function:
-\[ 
+\begin{equation} \label{eq:argmin}
 \operatorname*{arg\,min (or\,arg\,max)}_{U,V} \left[ f(U, V) = \sum_{i=1}^{nRows} \sum_{j=1}^{nCols} f(\bar{u}_{i}, \bar{v}_{j}) \right]
-\]
+\end{equation}
 
 When we take the gradient of the objective function with respect to a row in the \emph{user} matrix \emph{U} (e.g. $\bar{u}_{i}$), 
 we sum up the gradient of all the entries in $\hat{A}$ that belong to the same row $\bar{u}_{i}$.  
-% equation in slide 10 of cs534L-SAGmf.pptx
-\[
+\begin{equation} \label{eq:gradU}
 \frac{\text{d}f(U,V)}{\text{d}\bar{u}_i} = \sum_{j=1}^{nCols} \frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{u}_i}
-\]
+\end{equation}
 
-Similarly, when we take the gradient with respect to \emph{V}, we sum up the gradients across different rows that belong to the same column: 
-\[
+Similarly, when we take the gradient with respect to a column of \emph{V} (e.g. $\bar{v}_{j}$), we sum up the gradients across different rows that belong to the same column: 
+\begin{equation} \label{eq:gradV}
 \frac{\text{d}f(U,V)}{\text{d}\bar{v}_j} = \sum_{i=1}^{nRows} \frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{v}_j}
-\]
+\end{equation}
 
+Both $\frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{u}_i}$ and $\frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{v}_j}$ are vectors of length \emph{nDims}, the number of latent dimensions.
+Specifically, $\frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{u}_i}$ is a \emph{1}-by-\emph{nDims} row vector;
+$\frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{v}_j}$ is a \emph{nDims}-by-\emph{1} column vector.
+Similarly, $\frac{\text{d}f(U,V)}{\text{d}\bar{u}_i}$ is a row vector, and $\frac{\text{d}f(U,V)}{\text{d}\bar{v}_j}$ is a column vector, of length \emph{nDims}.
 
+In \emph{SAG}, storing only the summed-up gradients is not sufficient for matrix factorization.
+The reason is that, each iteration of \emph{SAG} requires the fine-grain gradients of individual entries 
+(e.g. $\frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{u}_i}$ and $\frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{v}_j}$) 
+that we previously sampled at an iteration before \emph{t}.  
+As we will prove, when directly applied to matrix factorization without using our \tool approach, \emph{SAG} will have a asymptotic space complexity of $\theta$(\emph{nDims}*(min(\emph{M},\emph{N})+\emph{nRows}+\emph{nCols})).
+\emph{M} is the number of \emph{distinct} samples we have previously visited.  
+Usually, $\emph{M} = B*t$, where $B$ is the batch size per iteration, and $t$ is the number of iterations previously done.  
 
-In \emph{SAG} storing the summed gradients is not sufficient because in each iteration \emph{SAG} requires previously-computed gradients of individual entries.
+Here, we want to point out that \tool preserves the low asymptotic time complexity as \emph{SAG}; and \tool reduces asymptotic space complexity to $\theta$(\emph{nDims}*(\emph{nRows}+\emph{nCols})+\emph{N}). 
+We will prove that this asymptotic space complexity is as compact as any memory-less approach.
+
 
 \header{Gradient Methods in Matrix Factorization.}
+Gradient methods are iterative methods of optimization.  
+When we increase the number of iterations, we expect the quality of optimization to also increase over time.
+At each iteration, gradient methods sample a batch of $B$ entries, calculate the gradients of these entries, and use the calculated gradients to update $U$ and $V$ for the next iteration:
+\begin{equation} \label{eq:Ut}
+U^{t+1} = U^t + \frac{\alpha^{t}}{B}\left(\sum_{b=1}^{B}\frac{\text{d}f(\bar{u}_{entry(b).i}, \bar{v}_{entry(b).j})}{\text{d}\bar{u}_{entry(b).i}}\right)
+\end{equation}
+\begin{equation} \label{eq:Vt}
+V^{t+1} = V^t + \frac{\alpha^{t}}{B}\left(\sum_{b=1}^{B}\frac{\text{d}f(\bar{u}_{entry(b).i}, \bar{v}_{entry(b).j})}{\text{d}\bar{v}_{entry(b).j}}\right)
+\end{equation}
+
+At iteration \emph{t}, $U^{t}$ is the current approximation of $U$.
+We use the gradients of the sampled batch of entries to update $U^{t}$ into $U^{t+1}$ for iteration \emph{t+1}.
+
+$\alpha^{t}$ is the \emph{learning-rate} or \emph{step-size}, at iteration \emph{t}.  
+When the goal of our optimization is to maximize an objective function, we apply \emph{gradient-ascent} on \emph{U} and \emph{V}; thus we set $\alpha^{t} > 0$.
+When we try to minimize an objective function, we apply \emph{gradient-descent} and set $\alpha^{t} < 0$.
+
+\emph{entry(b)} is the \emph{b}-th entry in our batch of samples.  
+\emph{entry(b).i} is the \emph{row} number of the entry; \emph{entry(b).j} is the \emph{column} number of the entry sampled from $A$.
+
+Full deterministic gradient (\emph{FG}) takes all $N$ samples at each iteration;  $B$ = $N$ in \emph{FG}.
+Stochastic gradient (\emph{SG}) takes only one or a few samples per iteration: $B$ is usually a constant much less than $N$.
+
+
+\header{Stochastic Average Gradient.}
+Stochastic Average Gradient (\emph{SAG}) requires a memory of previously-computed gradients: e.g. $\bar{m}_{U}^{t}$ and $\bar{m}_{V}^{t}$ for matrix factorization.
+At each iteration, \emph{SAG} uses the batch of samples to update the memory, and applies the updated memory $\bar{m}_{U}^{t+1}$ and $\bar{m}_{V}^{t+1}$ on $U$ and $V$ for gradient descent or gradient ascent:
+\begin{equation} \label{eq:sag_mi}
+  \bar{m}_{entry(b).i}^{t+1} = \frac{\text{d}f(\bar{u}_{entry(b).i}, \bar{v}_{entry(b).j})}{\text{d}\bar{u}_{entry(b).i}}
+\end{equation}
+\begin{equation} \label{eq:sag_mu}
+  \bar{m}_{U}^{t+1} = \bar{m}_{U}^{t} + \sum_{b=1}^{B}\left[\bar{m}_{entry(b).i}^{t+1} - \bar{m}_{entry(b).i}^{t}\right]
+\end{equation}
+\begin{equation} \label{eq:sag_ut}
+  U^{t+1} = U^{t} + \frac{\alpha^{t}}{B}\left(\bar{m}_{U}^{t+1}\right)
+\end{equation}
+\begin{equation} \label{eq:sag_mj}
+  \bar{m}_{entry(b).j}^{t+1} = \frac{\text{d}f(\bar{u}_{entry(b).i}, \bar{v}_{entry(b).j})}{\text{d}\bar{v}_{entry(b).j}}
+\end{equation}
+\begin{equation} \label{eq:sag_mv}
+\bar{m}_{U}^{t+1} = \bar{m}_{U}^{t} + \sum_{b=1}^{B}\left[\bar{m}_{entry(b).j}^{t+1} - \bar{m}_{entry(b).j}^{t}\right]
+\end{equation}
+\begin{equation} \label{eq:sag_vt}
+  V^{t+1} = V^{t} + \frac{\alpha^{t}}{B}\left(\bar{m}_{V}^{t+1}\right)
+\end{equation}
+
+$\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$ are the memory of previously computed gradients.  
+Thus both $\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$ are vectors of length \emph{nDims}, the number of latent dimensions.
+
+We apply \emph{SAG} into matrix factorization for two reasons.
+First, \emph{SAG} has iteration cost as low as stochastic gradient (\emph{SG}).
+Second, \emph{SAG}'s convergence rate is faster than \emph{SG}, and sometimes as fast as full deterministic gradient (\emph{FG}).
+At a high level, a faster convergence rate implies a better optimization in a shorter amount of time when data-scientists prototype model-based recommender systems.
+In this paper, we minimize the drawbacks or costs of using \emph{SAG} in matrix factorization while preserving \emph{SAG}'s benefits.

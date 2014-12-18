@@ -12,7 +12,7 @@ All of the recommender systems that we cite above utilize either full determinis
 
 Unfortunately, both full deterministic gradient and stochastic gradient have pitfalls when it comes to prototyping recommender systems.  
 Full deterministic gradient can offer high quality optimizations.  
-However, \emph{FG} is slow because in each iteration of optimization, \emph{FG} has to pass through all the samples in the dataset.  
+However, \emph{FG} is slow because at each iteration of optimization, \emph{FG} has to pass through all the samples in the dataset.  
 Stochastic gradient is relatively fast; its iteration cost is low because each iteration of \emph{SG} looks at only one or a few samples.  
 However, the trade-off with stochastic gradient is that it often provides low quality optimizations.  
 By chance, stochastic gradient may \emph{eventually} yield a good quality optimization. 
@@ -24,12 +24,12 @@ The first reason is that data scientists often have to run repeated experiments:
 The high level goal to run multiple experiments is that, through experimentation and comparing results of multiple trials, 
 data scientists can ultimately get a sufficiently good mix of objective function and hyper parameters for fitting a dataset.  
 The second reason is that product life cycles are shortening in the age of agile software engineering.  
-Thus data scientists are often faced with the challenge of running more experiments and producing high quality results with less time.  
+Thus data scientists are faced with the challenge of running more experiments and producing high quality results with less time.  
 % how does SAG help achieve this goal: make it obvious
 
 %Why SAG in prototyping model-based recommender systems  
 In this paper, we study the challenge from the perspective of convex-optimization.  
-We propose using the stochastic average gradient (\emph{SAG}) method \cite{schmidt2013minimizing, roux2012stochastic} as a viable alternative to using \emph{FG} and \emph{SG} during the prototyping process.  
+We propose and hypothesize using the stochastic average gradient (\emph{SAG}) method \cite{schmidt2013minimizing, roux2012stochastic} as a viable alternative to using \emph{FG} and \emph{SG} during the prototyping process.  
 \emph{SAG} has the distinctive advantage that its optimization quality is proven to be much better than \emph{SG}; at the same time \emph{SAG}'s iteration cost is asymptotically as low as \emph{SG}.  
 However, applying and adapting \emph{SAG} to matrix factorization is not trivial because \emph{SAG} requires previously-computed gradients; 
 and storing these gradients can lead to very high asymptotic space complexity.  
@@ -46,6 +46,6 @@ To the best of our knowledge, we are the first to
 \item Prove in theory, that \tool has a convergence rate as fast as the original \emph{SAG}; \tool has asymptotic time complexity as efficient as any gradient method with the lowest iteration cost, and \tool has asymptotic space complexity as compact as any memoryless gradient method.  
 \item Extensively evaluate and compare \tool across multiple RecSys objective functions and diverse datasets.  
 \item Demonstrate in practice that, even without any optimization or fine-tuning on the implementation, \tool still yields the best optimization within the shortest time despite the additional time of re-computation, and that \tool uses memory at a level similar to the memory-less stochastic gradient. 
-\item Provide an follow-up experiment and evidence that both full deterministic gradient and stochastic gradient would take much longer for reaching a quality of optimization similar to \tool.
+\item Provide an follow-up evidence that both full deterministic gradient and stochastic gradient takes much longer to reach a quality of optimization similar to \tool.
 \end {compactitem}
 \end{sloppy}
