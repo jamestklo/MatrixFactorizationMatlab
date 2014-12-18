@@ -1,9 +1,17 @@
 \section{Future Work \& Conclusion}
 This paper is the first in the series of our study on data scientists prototyping model-based recommender systems.  
-We explored the convex-optimization perspective of the problem; and we propose Stochastic Average Gradient as a viable alternative to Full Deterministic Gradient and Stochastic Gradient.  
-In theory, we proved that our extension and adaptation of \emph{SAG} has asymptotic time complexity and asymptotic space complexity as efficient as stochastic gradient.  
+We explored the convex-optimization perspective of the problem; and we propose Stochastic Average Gradient as a viable alternative to Full Deterministic gradient and Stochastic gradient.  
+In theory, we proved that our extension and adaptation of \emph{SAG} preserves the fast convergence rate as the original \emph{SAG}.  
+Furthermore, \tool has both asymptotic time complexity and asymptotic space complexity as efficient as stochastic gradient.  
 In practice, through extensive evaluation we demonstrated that, even without any fine-tuning or optimization of the implementation, 
-\tool still outperforms both full deterministic gradient and stochastic gradient in terms of faster convergence.  
+\tool still outperforms both full deterministic gradient and stochastic gradient in terms of reaching the best quality optimization within the same amount of time.  
+Following up, we provided evidence that full deterministic gradient and stochastic gradient would take much longer to reach a quality of optimization similar to \tool.
+
+Currently we are extending \tool in two directions.  Both directions relate to running an iteration of full deterministic gradient in \tool.
+First, we are investigating if it is beneficial to run an iteration of full deterministic gradient more often.  
+In our experiments, we observed that both \emph{SG} and \emph{SAG} may converge early; the optimization may get stuck at a local sub-optimum for a long number of iterations.  
+Thus we are exploring if an iteration of full deterministic gradient would get the optimization back on track in case \tool gets stuck.
+Secondly, we aim to investigate how well \tool would perform in the production environment, because running the full deterministic gradient even once can be prohibitive for full-scale datasets.
 
 % the recommender perspective 
 In the future, we also aim to complete our ongoing work on the metrics perspective and on the software engineering perspective.  

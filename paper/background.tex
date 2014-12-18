@@ -20,16 +20,20 @@ The goal of matrix factorization is to find the best \emph{U} and the best \emph
 \operatorname*{arg\,min (or\,arg\,max)}_{U,V} \left[ f(U, V) = \sum_{i=1}^{nRows} \sum_{j=1}^{nCols} f(\bar{u}_{i}, \bar{v}_{j}) \right]
 \]
 
-When we take the gradient of the objective function with respect to a row in \emph{user} matrix \emph{U} (e.g. $\bar{u}_{i}$), 
+When we take the gradient of the objective function with respect to a row in the \emph{user} matrix \emph{U} (e.g. $\bar{u}_{i}$), 
 we sum up the gradient of all the entries in $\hat{A}$ that belong to the same row $\bar{u}_{i}$.  
 % equation in slide 10 of cs534L-SAGmf.pptx
-$
+\[
 \frac{\text{d}f(U,V)}{\text{d}\bar{u}_i} = \sum_{j=1}^{nCols} \frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{u}_i}
-$
+\]
 
 Similarly, when we take the gradient with respect to \emph{V}, we sum up the gradients across different rows that belong to the same column: 
-$
+\[
 \frac{\text{d}f(U,V)}{\text{d}\bar{v}_j} = \sum_{i=1}^{nRows} \frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{v}_j}
-$
+\]
+
+
+
+In \emph{SAG} storing the summed gradients is not sufficient because in each iteration \emph{SAG} requires previously-computed gradients of individual entries.
 
 \header{Gradient Methods in Matrix Factorization.}

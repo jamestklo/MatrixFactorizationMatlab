@@ -8,18 +8,21 @@ Matrix factorization (\emph{MF}) is a popular technique in model-based recommend
 % Pitfalls with FG and SG  
 In recommender systems that utilize matrix factorization, most optimize an objective function.  
 Full deterministic gradient (\emph{FG}) and stochastic gradient (\emph{SG}) are the two main gradient methods for optimization.  
-All of the recommender systems that we cited above utilize full deterministic gradient, or stochastic gradient.
+All of the recommender systems that we cite above utilize either full deterministic gradient, or stochastic gradient.
 
 Unfortunately, both full deterministic gradient and stochastic gradient have pitfalls when it comes to prototyping recommender systems.  
 Full deterministic gradient can offer high quality optimizations.  
 However, \emph{FG} is slow because in each iteration of optimization, \emph{FG} has to pass through all the samples in the dataset.  
 Stochastic gradient is relatively fast; its iteration cost is low because each iteration of \emph{SG} looks at only one or a few samples.  
-However, the trade-off with stochastic gradient is that it often provides relatively low quality optimizations.  
+However, the trade-off with stochastic gradient is that it often provides low quality optimizations.  
+By chance, stochastic gradient may \emph{eventually} yield a good quality optimization. 
+If it ever happens, it is after a tremendous number of iterations.  
+Thus stochastic gradient is also slow in terms of yielding a good quality optimization within a reasonable amount of time.
 
-High quality optimizations with a low iteration cost is important when building recommender systems.  
+High quality optimizations within a short amount of time is important when building recommender systems.  
 The first reason is that data scientists often have to run repeated experiments: e.g. with different objective functions, different metrics, different datasets, and different optimization parameters.  
-The high level goal to run multiple experiments is that through experimentation and comparing results, 
-data scientists can ultimately get a sufficiently good combination of the different facets of matrix factorization that we just mentioned.  
+The high level goal to run multiple experiments is that, through experimentation and comparing results of multiple trials, 
+data scientists can ultimately get a sufficiently good mix of objective function and hyper parameters for fitting a dataset.  
 The second reason is that product life cycles are shortening in the age of agile software engineering.  
 Thus data scientists are often faced with the challenge of running more experiments and producing high quality results with less time.  
 % how does SAG help achieve this goal: make it obvious
@@ -27,20 +30,22 @@ Thus data scientists are often faced with the challenge of running more experime
 %Why SAG in prototyping model-based recommender systems  
 In this paper, we study the challenge from the perspective of convex-optimization.  
 We propose using the stochastic average gradient (\emph{SAG}) method \cite{schmidt2013minimizing, roux2012stochastic} as a viable alternative to using \emph{FG} and \emph{SG} during the prototyping process.  
-\emph{SAG} has the distinctive advantage that its optimization quality is proven to be much better than \emph{SG}; at the same time \emph{SAG}'s iteration cost is asymptotically identical to \emph{SG}.  
-However, applying and adapting \emph{SAG} to matrix factorization is not trivial because \emph{SAG} requires previously-computed gradients and storing these gradients can lead to very high asymptotic space complexity.  
-We explore the challenge with space-complexity, and addresses it by proposing a re-computation approach (\tool) that re-computes the previously-computed gradients.  
-\tool preserves the low iteration cost of \emph{SAG}.  
-The asymptotic space complexity of our \tool approach is as efficient as memory-less gradient methods such as \emph{FG} and \emph{SG}.  
+\emph{SAG} has the distinctive advantage that its optimization quality is proven to be much better than \emph{SG}; at the same time \emph{SAG}'s iteration cost is asymptotically as low as \emph{SG}.  
+However, applying and adapting \emph{SAG} to matrix factorization is not trivial because \emph{SAG} requires previously-computed gradients; 
+and storing these gradients can lead to very high asymptotic space complexity.  
+We explore the challenge with space-complexity, and resolve it by proposing a re-computation approach (\tool) that re-computes the previously-computed gradients on-the-fly, on-demand.  
+\tool preserves the fast convergence rate and low iteration cost of \emph{SAG}.  
+Moreover, the asymptotic space complexity of \tool is as compact as memory-less gradient methods such as \emph{FG} and \emph{SG}.  
 
 To the best of our knowledge, we are the first to
 \begin{sloppy}
 \begin{compactitem}
 \item Identify pitfalls associated with using full deterministic gradient and stochastic gradient when data-scientists prototype model-based recommender systems.  
-\item Propose Stochastic Average Gradient (\emph{SAG}) as a viable alternative for yielding higher quality approximations and low iteration costs in matrix factorization.  
+\item Propose Stochastic Average Gradient (\emph{SAG}) as a viable alternative for yielding higher quality optimizations while enjoying a low iteration cost.  
 \item Extend \emph{SAG} into \tool for matrix factorization, resolve the space complexity challenge in adapting \emph{SAG} from the domain of large-scale supervised-machine-learning into the domain of prototyping recommender algorithms.  
-\item Prove in theory, that our \tool approach has identical asymptotic time complexity and identical asymptotic space complexity as the fast and memoryless stochastic gradient method.  
+\item Prove in theory, that \tool has a convergence rate as fast as the original \emph{SAG}; and \tool has asymptotic time complexity as efficient as, and asymptotic space complexity as compact as, the fast and memoryless stochastic gradient method.  
 \item Extensively evaluate and compare \tool across multiple RecSys objective functions and diverse datasets.  
-\item Demonstrate in practice that, even without any optimization on the implementation, \tool still yields faster convergence despite the additional time of re-computation, and that \tool uses memory at a level similar to the memory-less stochastic gradient.  
+\item Demonstrate in practice that, even without any optimization or fine-tuning on the implementation, \tool still yields the best optimization within the shortest time despite the additional time of re-computation, and that \tool uses memory at a level similar to the memory-less stochastic gradient. 
+\item Provide an follow-up experiment and evidence that both full deterministic gradient and stochastic gradient would take much longer for reaching a quality of optimization similar to \tool.
 \end {compactitem}
 \end{sloppy}
