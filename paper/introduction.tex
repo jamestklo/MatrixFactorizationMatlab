@@ -19,8 +19,11 @@ However, the trade-off with stochastic gradient is that it often provides relati
 
 High quality optimizations with a low iteration cost is important when building recommender systems.  
 The first reason is that data scientists often have to run repeated experiments: e.g. with different objective functions, different metrics, different datasets, and different optimization parameters.  
+The high level goal to run multiple experiments is that through experimentation and comparing results, 
+data scientists can ultimately get a sufficiently good combination of the different facets of matrix factorization that we just mentioned.  
 The second reason is that product life cycles are shortening in the age of agile software engineering.  
 Thus data scientists are often faced with the challenge of running more experiments and producing high quality results with less time.  
+% how does SAG help achieve this goal: make it obvious
 
 %Why SAG in prototyping model-based recommender systems  
 In this paper, we study the challenge from the perspective of convex-optimization.  
@@ -29,14 +32,16 @@ We propose using the stochastic average gradient (\emph{SAG}) method \cite{schmi
 However, applying and adapting \emph{SAG} to matrix factorization is not trivial because \emph{SAG} requires previously-computed gradients and storing these gradients can lead to very high asymptotic space complexity.  
 We explore the challenge with space-complexity, and addresses it by proposing a re-computation approach (\tool) that re-computes the previously-computed gradients.  
 \tool preserves the low iteration cost of \emph{SAG}.  
-The asymptotic space complexity of our \tool approach is as efficient as the memory-less full deterministic gradient, and stochastic gradient.  
+The asymptotic space complexity of our \tool approach is as efficient as memory-less gradient methods such as \emph{FG} and \emph{SG}.  
 
 To the best of our knowledge, we are the first to
+\begin{sloppy}
 \begin{compactitem}
-\item Identify the pitfalls associated with using full deterministic gradient and stochastic gradient when data-scientists prototype model-based recommender systems.  
+\item Identify pitfalls associated with using full deterministic gradient and stochastic gradient when data-scientists prototype model-based recommender systems.  
 \item Propose Stochastic Average Gradient (\emph{SAG}) as a viable alternative for yielding higher quality approximations and low iteration costs in matrix factorization.  
 \item Extend \emph{SAG} into \tool for matrix factorization, resolve the space complexity challenge in adapting \emph{SAG} from the domain of large-scale supervised-machine-learning into the domain of prototyping recommender algorithms.  
 \item Prove in theory, that our \tool approach has identical asymptotic time complexity and identical asymptotic space complexity as the fast and memoryless stochastic gradient method.  
 \item Extensively evaluate and compare \tool across multiple RecSys objective functions and diverse datasets.  
 \item Demonstrate in practice that, even without any optimization on the implementation, \tool still yields faster convergence despite the additional time of re-computation, and that \tool uses memory at a level similar to the memory-less stochastic gradient.  
 \end {compactitem}
+\end{sloppy}

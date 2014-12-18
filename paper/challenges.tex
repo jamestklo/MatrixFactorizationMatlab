@@ -1,3 +1,12 @@
+\section{Challenge}
+In \emph{SAG}, we cannot just store only $\frac{\text{d}f(U, V)}{\text{d}\bar{u}_i}$ and $\frac{\text{d}f(U, V)}{\text{d}\bar{v}_j}$.  
+The reason is that $\frac{\text{d}f(U, V)}{\text{d}\bar{u}_i}$ and $\frac{\text{d}f(U, V)}{\text{d}\bar{v}_j}$ are aggregated gradients of individual entries in the approximation matrix $\hat{A}$.
+In \emph{SAG}, the gradients of the sampled entries must be available at the time of updating U^{t} into U^{t+1}.  
+
+
+
+
+
 \section{Motivation and Goal}
 %We encountered and had to resolve several challenges while trying to generate satisfiable DOM trees:
 % want 1 example

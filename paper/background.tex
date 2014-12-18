@@ -3,7 +3,8 @@ To motivate our paper and the space complexity challenge, we first introduce the
 
 
 \header{Matrix Factorization}
-Model-based recommender systems approximate the \emph{user-item} matrix \emph{A} through the dot-product of the \emph{user}-matrix \emph{U} and the \emph{item}-matrix \emph{V}: $\hat{A} = U * V.$  
+Model-based recommender systems approximate the \emph{user-item} matrix \emph{A} through 
+the dot-product of the \emph{user}-matrix \emph{U} and the \emph{item}-matrix \emph{V}: $\hat{A} = U * V.$  
 
 The \emph{user-item} matrix \emph{A} is a \emph{nRows}-by-\emph{nCols} matrix.  
 Similarly, the approximation matrix $\hat{A}$ also has \emph{nRows} rows, and \emph{nCols} columns.  
@@ -14,11 +15,21 @@ The \emph{item} matrix \emph{V} is \emph{nDims}-by-\emph{nCols}.
 
 
 \header{Optimizing an Objective Function}
-When trying to find a suitable \emph{user} matrix \emph{U} and a suitable \emph{item} matrix \emph{V}, 
-many model-based recommender systems optimize an objective function with respect to \emph{U} and \emph{V}: 
+The goal of matrix factorization is to find the best \emph{U} and the best \emph{V} whose dot product optimizes an objective function:
 \[ 
 \operatorname*{arg\,min (or\,arg\,max)}_{U,V} \left[ f(U, V) = \sum_{i=1}^{nRows} \sum_{j=1}^{nCols} f(\bar{u}_{i}, \bar{v}_{j}) \right]
 \]
 
-When we take the gradient of the objective function with respect to a row in \emph{U} (e.g. $\bar{u}_{i}$), 
-we sum up the gradient of all the entries in $\hat{A}$ that belong to $\bar{u}_{i}$.  
+When we take the gradient of the objective function with respect to a row in \emph{user} matrix \emph{U} (e.g. $\bar{u}_{i}$), 
+we sum up the gradient of all the entries in $\hat{A}$ that belong to the same row $\bar{u}_{i}$.  
+% equation in slide 10 of cs534L-SAGmf.pptx
+$
+\frac{\text{d}f(U,V)}{\text{d}\bar{u}_i} = \sum_{j=1}^{nCols} \frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{u}_i}
+$
+
+Similarly, when we take the gradient with respect to \emph{V}, we sum up the gradients across different rows that belong to the same column: 
+$
+\frac{\text{d}f(U,V)}{\text{d}\bar{v}_j} = \sum_{i=1}^{nRows} \frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{v}_j}
+$
+
+\header{Gradient Methods in Matrix Factorization.}
