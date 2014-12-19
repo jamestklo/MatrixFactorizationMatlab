@@ -9,8 +9,10 @@ the dot-product of the \emph{user}-matrix \emph{U} and the \emph{item}-matrix \e
 The \emph{user-item} matrix \emph{A} is a \emph{nRows}-by-\emph{nCols} matrix.
 \emph{A} can be \emph{sparse}; thus we use \emph{N} to indicate the number of non-zero entries in \emph{A}.
 
-The approximation matrix $\hat{A}$ also has \emph{nRows} rows, and \emph{nCols} columns.  
+The \emph{approximation} matrix $\hat{A}$ also has \emph{nRows} rows, and \emph{nCols} columns.  
 $\hat{A}$ is not a sparse matrix.  The goal of model-based recommendation is to use the non-zero entries to approximate the missing entries in \emph{A}. 
+The latent dimensions \emph{nDims} cancels-out in the dot product between \emph{U} and \emph{V}. 
+This is why the \emph{approximation} matrix has identical dimensions as the original \emph{user-item} matrix.  
 
 The \emph{user} matrix \emph{U} is \emph{nRows}-by-\emph{nDims}: \emph{U} has \emph{nRows} rows, and \emph{nDims} columns.  
 \emph{nDims} is the number of latent dimensions.  
