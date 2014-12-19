@@ -31,6 +31,16 @@ Thus the total amount of space that we use to store the aggregated gradients is 
 Adding the fine-grain gradients and the aggregated gradients together, the asymptotic space complexity becomes $\theta(nDims*(min(M,N)+nRows+nCols))$ after ignoring the constants.  
 \end{proof}
 
-\header{Chain rule does not apply.}
-
 \header{No guarantee that lower bound of $M$ is much less than $N$.}
+If we can guarantee that $M$ must be much less than $N$ at all times, then the effective asymptotic space complexity becomes $\theta(nDims*(M+nRows+nCols))$; and 
+$\theta(nDims*(M+nRows+nCols))$ would be acceptable if $M$ is not much larger than $nRows$ or $nCols$.
+
+Unfortunately, we shall prove that the lower bound of $M$ depends on the convergence rate and error-tolerance, rather than the number of non-zero entries in the dataset.
+
+\emph{Theorem 2.}
+The lower bound of $M$, the number of previously-sampled entries, does not depend on $N$, the number of non-zero entries in the dataset.
+\begin{proof}
+
+\end{proof}
+
+\header{Chain rule offers no savings in matrix factorization.}

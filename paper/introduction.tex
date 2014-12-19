@@ -12,8 +12,8 @@ All of the recommender systems that we cite above utilize either full determinis
 
 Unfortunately, both full deterministic gradient and stochastic gradient have pitfalls when it comes to prototyping recommender systems.  
 Full deterministic gradient can offer high quality optimizations.  
-However, \emph{FG} is slow because at each iteration of optimization, \emph{FG} has to pass through all the samples in the dataset.  
-Stochastic gradient is relatively fast; its iteration cost is low because each iteration of \emph{SG} looks at only one or a few samples.  
+However, \emph{FG} is slow because at each iteration of optimization, \emph{FG} has to sample through all the entries in the dataset.  
+Stochastic gradient is relatively fast; its iteration cost is low because each iteration of \emph{SG} sample only one or a few entries.  
 However, the trade-off with stochastic gradient is that it often provides low quality optimizations.  
 By chance, stochastic gradient may \emph{eventually} yield a good quality optimization. 
 If it ever happens, it is after a tremendous number of iterations.  
