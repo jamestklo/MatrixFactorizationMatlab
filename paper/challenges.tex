@@ -1,22 +1,36 @@
 \section{Challenge}
 As equations \ref{eq:sag_mu} and \ref{eq:sag_mv} illustrate, updating $\bar{m}_{U}^{t+1}$ and $\bar{m}_{V}^{t+1}$ requires $\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$.  
-$\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$ are the fine-grained gradients of an individual entry $entry(b)$ the last time (or the most recent time) that $entry(b)$ was sampled.  
+$\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$ are the fine-grained gradients of an individual entry $entry(b)$ from the last time (or the most recent time) that $entry(b)$ was sampled.  
 
 When applying \emph{SAG} into matrix factorization, a major challenge is to make these fine-grain gradients available: 
 $\bar{m}_{entry(b).i}^{t}$ from equation \ref{eq:sag_mu}, and 
 $\bar{m}_{entry(b).j}^{t}$ from equation \ref{eq:sag_mv}  
 
-A naive approach is to store these fine-grain graidents.  
-As we shall proof, such naive approach is undesirable because storing all these gradients would take up a lot of space.  
+A na$\ddot{i}$ve approach is to store all these fine-grain graidents.  
+As we shall prove, the na$\ddot{i}$ve approach is undesirable because storing all these gradients would take up a lot of space.  
 
-\newtheorem{totalspace}{The total asymptotic space complexity of is }  
-%\begin{proof}[Proof A]  
-For each entry, the amount of memory required is $2*nDims$:  
+%\newtheorem{totalspace}{}  
+\emph{Theorem 1.} 
+The total asymptotic space complexity is $\theta(nDims*(min(M,N)+nRows+nCols))$ for storing the fine-grain gradients of all entries that we had previously sampled.  
+\begin{proof}
+For each individual entry, the amount of space required is $2*nDims$:  
 the gradient with respect to row $\bar{u}_i$ ($\bar{m}_{entry(b).i}^{t}$) is a \emph{1}-by-\emph{nDims} row vector;  
 the gradient with respect to column $\bar{v}_j$ ($\bar{m}_{entry(b).j}^{t}$) is a \emph{nDims}-by-\emph{1} column vector.  
 
-We must store the fine-grain gradients of all entries that were sampled previously: $M*2*nDims$.  
-Recalling the background section, \emph{M} is the number of distinct entries that we previously sampled.  
-We store only one set of gradients ($\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$) for each entry, 
-because \emph{SAG} requires only the most 
-%\end{proof}
+When we store the fine-grain gradients of all previously-sampled entries, the amount of space required becomes $M*2*nDims$.  
+Recalling from the background section, \emph{M} is the number of distinct entries that we previously sampled.  
+
+As shown in equations \ref{eq:sag_mu} and \ref{eq:sag_mv}, \emph{SAG} requires only the most recent gradient of each previously-sampled entry.
+Thus for each entry, we store a max of only one set of gradients ($\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$).
+The total amount of space required becomes $min(M,N)*2*nDims$.
+
+Now, according to equations \ref{eq:sag_mu} and \ref{eq:sag_mv}, we must also store the aggregated gradients: $\bar{m}_{U}^{t}$ and $\bar{m}_{V}^{t}$.  
+$\bar{m}_{U}^{t}$ takes $nRows*nDims$ space; $\bar{m}_{V}^{t}$ takes $nDims*nCols$ space.  
+Thus the total amount of space that we use to store the aggregated gradients is ($nRows*nDims$) + ($nDims*nCols$), which is equivalent to $nDims*(nRows+nCols)$ after simplification. 
+
+Adding the fine-grain gradients and the aggregated gradients together, the asymptotic space complexity becomes $\theta(nDims*(min(M,N)+nRows+nCols))$ after ignoring the constants.  
+\end{proof}
+
+\header{Chain rule does not apply.}
+
+\header{No guarantee that lower bound of $M$ is much less than $N$.}

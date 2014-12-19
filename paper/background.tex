@@ -44,11 +44,11 @@ In \emph{SAG}, storing only the summed-up gradients is not sufficient for matrix
 The reason is that, each iteration of \emph{SAG} requires the fine-grain gradients of individual entries 
 (e.g. $\frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{u}_i}$ and $\frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{v}_j}$) 
 that we previously sampled at an iteration before \emph{t}.  
-As we will prove, when directly applied to matrix factorization without using our \tool approach, \emph{SAG} will have a asymptotic space complexity of $\theta$(\emph{nDims}*(min(\emph{M},\emph{N})+\emph{nRows}+\emph{nCols})).
+As we will prove, when directly applied to matrix factorization without using our \tool approach, \emph{SAG} will have a asymptotic space complexity of $\theta(nDims*(min(M,N)+nRows+nCols))$.
 \emph{M} is the number of \emph{distinct} samples we have previously visited.  
 Usually, $\emph{M} = B*t$, where $B$ is the batch size per iteration, and $t$ is the number of iterations previously done.  
 
-Here, we want to point out that \tool preserves the low asymptotic time complexity as \emph{SAG}; and \tool reduces asymptotic space complexity to $\theta$(\emph{nDims}*(\emph{nRows}+\emph{nCols})+\emph{N}). 
+Here, we want to point out that \tool preserves the low asymptotic time complexity as \emph{SAG}; and \tool reduces asymptotic space complexity to $\theta(N+nDims*(nRows+nCols))$. 
 We will prove that this asymptotic space complexity is as compact as any memory-less approach.
 
 
@@ -94,13 +94,20 @@ After the update, \emph{SAG} then applies the updated memory $\bar{m}_{U}^{t+1}$
   \bar{m}_{entry(b).j}^{t+1} = \frac{\text{d}f(\bar{u}_{entry(b).i}, \bar{v}_{entry(b).j})}{\text{d}\bar{v}_{entry(b).j}}
 \end{equation}
 \begin{equation} \label{eq:sag_mv}
-\bar{m}_{U}^{t+1} = \bar{m}_{U}^{t} + \sum_{b=1}^{B}\left[\bar{m}_{entry(b).j}^{t+1} - \bar{m}_{entry(b).j}^{t}\right]
+\bar{m}_{V}^{t+1} = \bar{m}_{V}^{t} + \sum_{b=1}^{B}\left[\bar{m}_{entry(b).j}^{t+1} - \bar{m}_{entry(b).j}^{t}\right]
 \end{equation}
 \begin{equation} \label{eq:sag_vt}
   V^{t+1} = V^{t} + \frac{\alpha^{t}}{B}\left(\bar{m}_{V}^{t+1}\right)
 \end{equation}
 
-%$\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$ are the memory of previously-computed gradients.  
+$\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$ are the fine-grain gradients of individual matrix entries that were previously sampled.  
+
+$\bar{m}_{entry(b).i}^{t}$ is a $1$-by-$nRows$ row vector;
+$\bar{m}_{entry(b).j}^{t}$ is a $nCols$-by-$1$ column vector.
+
+$\bar{m}_{U}^{t}$ is a $nRows$-by-$nDims$ matrix, because $\bar{m}_{U}^{t}$ aggregates the gradients of all rows in the \emph{user} matrix $U$.
+Similarily, $\bar{m}_{V}^{t}$ is a $nDims$-by-$nCols$ matrix.
+
 We apply \emph{SAG} into matrix factorization for two reasons.  
 First, \emph{SAG} has iteration cost as low as stochastic gradient (\emph{SG}).
 Second, \emph{SAG}'s convergence rate is faster than \emph{SG}, and sometimes as fast as full deterministic gradient (\emph{FG}).
