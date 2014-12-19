@@ -31,16 +31,51 @@ Thus the total amount of space that we use to store the aggregated gradients is 
 Adding the fine-grain gradients and the aggregated gradients together, the asymptotic space complexity becomes $\theta(nDims*(min(M,N)+nRows+nCols))$ after ignoring the constants.  
 \end{proof}
 
-\header{No guarantee that lower bound of $M$ is much less than $N$.}
-If we can guarantee that $M$ must be much less than $N$ at all times, then the effective asymptotic space complexity becomes $\theta(nDims*(M+nRows+nCols))$; and 
-$\theta(nDims*(M+nRows+nCols))$ would be acceptable if $M$ is not much larger than $nRows$ or $nCols$.
+\header{No guarantee that $min(M,N)$ is small.}
+If we can guarantee that $min(M,N)$ is small, or that $min(M,N)$ is asymptotically not larger than $nRows$ or $nCols$, 
+then the effective asymptotic space-complexity becomes $\theta(nDims*(nRows+nCols))$, which is the most compact anyone can possibly get.  Unfortunatley, we shall prove that there is no such guarantee.  
 
-Unfortunately, we shall prove that the lower bound of $M$ depends on the convergence rate and error-tolerance, rather than the number of non-zero entries in the dataset.
+First, we explore what the best possible asymptotical space-complexity can be in matrix factorization.
 
 \emph{Theorem 2.}
-The lower bound of $M$, the number of previously-sampled entries, does not depend on $N$, the number of non-zero entries in the dataset.
-\begin{proof}
+$\Omega(N+nDims*(nRows+nCols))$ is the lower-bound asymptotic space-complexity in matrix factorization.
+\begin{proof}  
+Matrix factorization is to approximate a matrix $A$ (e.g. the \emph{user-item} matrix) through the dot product of two matrices $U$ (e.g. the \emph{user} matrix) and $V$ (e.g. the \emph{item} matrix). 
+$A$ has $N$ non-zero entries.  $U$ is a $nRows$-by$nDims$ matrix; $V$ is a $nDims$-by-$nCols$ matrix.  
+In each iteration of convex optimization, we must update $U$ and $V$, and use an objective function to compare our approximation to the ground-truth matrix $A$.  
+Therefore, any matrix factorization algorithm would have an asymptotic space-complexity of at least $\Omega(N+nDims*(nRows+nCols))$.
+\end{proof}
 
+If we can guarantee that $min(M,N)$ is asymptotically not larger than $nRows$ or $nCols$, 
+then we can prove that the na$\ddot{i}$ve approach has already achieved the best possible asymptotic space-complexity, and that our challenge is irrelevant.
+However, we shall prove that such guarantee does not exist.
+
+\emph{Theorem 3.}  There is no guarantee that $min(M,N)$ is asymptotically not larger than $nRows$ or $nCols$.
+\begin{proof}
+$N$ is the number of non-zero entries in the matrix $A$.
+Unless there is, or unless we are restricted to an upper-bound of sparsity, then $N$ must have $O(nRows*nCols)$ space.
+
+$M$ is the number of \emph{distinct} entries that we previously sampled.
+According to equation \ref{eq:msampled}, $M$ depends on the batch size at each iteration $B_r$, and the number of iterations previously done $t-1$.
+Usually, the batch size is a constant $B$.  Thus the lower bound of $M$ most likely depends on the lower bound of $t$.
+However, the lower bound of $t$ depends on the convergence rate, and the tolerance of error $\epsilon$.
+For example, if the convergence rate is exponential (e.g. $O(p^t)$), then the loewr bound of $t$ is $\Omega(log(\frac{1}{\epsilon}))$.
+%$p$ is a constant calculated from the Hessians of the objective function; $0 \leq p \leq 1$.
+%Convergence rate depends on the combination of both the underlying objective function, and the gradient method being used.
+%For example, for a given objective function, both full deterministic gradient and stochastic average gradient may yield the fast exponential convergence $O(p^t)$.
+Therefore, the lower bound of $M$ does not depend on $N$, $nRows$ or $nCols$.
+Given a dataset, the only way to enforce $M \leq N$ is to either tolerate a high error, or to find a combination of objective function and gradient method that yields the fastest convergence rate as possible.
+The asymptotic space-complexity of using \tool does not depend on $M$.
+Thus \tool does not enforce data-scientists to tolerate a high error.
+Given any objective function, the convergence rate of \emph{SAG} \cite{schmidt2013minimizing, roux2012stochastic} is always faster than stochastic gradient and is sometimes as fast as the fastest full deterministic gradient.
+\tool preserves the convergence rate of \emph{SAG}.
 \end{proof}
 
 \header{Chain rule offers no savings in matrix factorization.}
+In supervised machine-learning, we can use the chain-rule in differential-calculus to reduce space-complexity.
+Unfortunately, applying the chain-rule in matrix-factorization would result in a space-complexity larger than the na$\ddot{i}$ve approach.
+
+
+\begin{equation} \label{eq:sml}
+\operatorname*{arg\,min (or\,arg\,max)}_{\omega} f(X, \omega)
+\end{equation}
