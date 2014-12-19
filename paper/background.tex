@@ -78,7 +78,8 @@ Stochastic gradient (\emph{SG}) takes only one or a few samples per iteration: $
 
 \header{Stochastic Average Gradient.}
 Stochastic Average Gradient (\emph{SAG}) requires a memory of previously-computed gradients: e.g. $\bar{m}_{U}^{t}$ and $\bar{m}_{V}^{t}$ for matrix factorization.
-At each iteration, \emph{SAG} uses the batch of samples to update the memory, and applies the updated memory $\bar{m}_{U}^{t+1}$ and $\bar{m}_{V}^{t+1}$ on $U$ and $V$ for gradient descent or gradient ascent:
+Each iteration of \emph{SAG} uses a sampled batch of entries to update the memory.
+After the update, \emph{SAG} then applies the updated memory $\bar{m}_{U}^{t+1}$ and $\bar{m}_{V}^{t+1}$ respectively on calculating $U^{t+1}$ and $V^{t+1}$:
 \begin{equation} \label{eq:sag_mi}
   \bar{m}_{entry(b).i}^{t+1} = \frac{\text{d}f(\bar{u}_{entry(b).i}, \bar{v}_{entry(b).j})}{\text{d}\bar{u}_{entry(b).i}}
 \end{equation}
@@ -98,9 +99,7 @@ At each iteration, \emph{SAG} uses the batch of samples to update the memory, an
   V^{t+1} = V^{t} + \frac{\alpha^{t}}{B}\left(\bar{m}_{V}^{t+1}\right)
 \end{equation}
 
-$\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$ are the memory of previously computed gradients.  
-Thus both $\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$ are vectors of length \emph{nDims}, the number of latent dimensions.
-
+%$\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$ are the memory of previously-computed gradients.  
 We apply \emph{SAG} into matrix factorization for two reasons.
 First, \emph{SAG} has iteration cost as low as stochastic gradient (\emph{SG}).
 Second, \emph{SAG}'s convergence rate is faster than \emph{SG}, and sometimes as fast as full deterministic gradient (\emph{FG}).
