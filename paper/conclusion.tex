@@ -1,8 +1,9 @@
 \section{Future Work \& Conclusion}
 This paper is the first in the series of our study on data scientists prototyping model-based recommender systems.  
 We explored the convex-optimization perspective of the problem: we propose Stochastic Average Gradient as a viable alternative to Full Deterministic gradient and Stochastic gradient.  
+By taking advantage of \emph{SAG}'s fast convergence rate, we main to enable data-scientists run more experiments and produce high quality results with less time.  
 In theory, we proved that our extension and adaptation of \emph{SAG} preserves the fast convergence rate as the original \emph{SAG}.  
-Furthermore, \tool has both asymptotic time complexity and asymptotic space complexity as efficient as stochastic gradient.  
+Furthermore, \tool has asymptotic time complexity as efficient as gradient methods with the lowest itreation cost, and asymptotic space complexity as compact as any memory-less gradient methods.  
 In practice, through extensive evaluation we demonstrated that, even without any fine-tuning or optimization of the implementation, 
 \tool still outperforms both full deterministic gradient and stochastic gradient in terms of reaching the best quality optimization within the same amount of time.  
 Following up, we provided evidence that full deterministic gradient and stochastic gradient would take much longer to reach a quality of optimization similar to \tool.

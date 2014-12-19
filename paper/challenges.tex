@@ -10,7 +10,7 @@ A naive approach is to store these fine-grain graidents.
 As we shall proof, such naive approach is undesirable because storing all these gradients would take up a lot of space.  
 
 \newtheorem{totalspace}{The total asymptotic space complexity of is }  
-\begin{proof}[Proof]  
+%\begin{proof}[Proof A]  
 For each entry, the amount of memory required is $2*nDims$:  
 the gradient with respect to row $\bar{u}_i$ ($\bar{m}_{entry(b).i}^{t}$) is a \emph{1}-by-\emph{nDims} row vector;  
 the gradient with respect to column $\bar{v}_j$ ($\bar{m}_{entry(b).j}^{t}$) is a \emph{nDims}-by-\emph{1} column vector.  
@@ -19,4 +19,4 @@ We must store the fine-grain gradients of all entries that were sampled previous
 Recalling the background section, \emph{M} is the number of distinct entries that we previously sampled.  
 We store only one set of gradients ($\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$) for each entry, 
 because \emph{SAG} requires only the most 
-\end{proof}
+%\end{proof}

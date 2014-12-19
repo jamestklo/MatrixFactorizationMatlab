@@ -11,7 +11,7 @@ The \emph{user-item} matrix \emph{A} is a \emph{nRows}-by-\emph{nCols} matrix.
 
 The \emph{approximation} matrix $\hat{A}$ also has \emph{nRows} rows, and \emph{nCols} columns.  
 $\hat{A}$ is not a sparse matrix.  The goal of model-based recommendation is to use the non-zero entries to approximate the missing entries in \emph{A}. 
-The latent dimensions \emph{nDims} cancels-out in the dot product between \emph{U} and \emph{V}. 
+When multiplying \emph{U} and \emph{V}, the latent dimensions \emph{nDims} cancels-out in the dot product. 
 This is why the \emph{approximation} matrix has identical dimensions as the original \emph{user-item} matrix.  
 
 The \emph{user} matrix \emph{U} is \emph{nRows}-by-\emph{nDims}: \emph{U} has \emph{nRows} rows, and \emph{nDims} columns.  
@@ -25,8 +25,7 @@ The goal of matrix factorization is to find the best \emph{U} and the best \emph
 \operatorname*{arg\,min (or\,arg\,max)}_{U,V} \left[ f(U, V) = \sum_{i=1}^{nRows} \sum_{j=1}^{nCols} f(\bar{u}_{i}, \bar{v}_{j}) \right]
 \end{equation}
 
-When we take the gradient of the objective function with respect to a row in the \emph{user} matrix \emph{U} (e.g. $\bar{u}_{i}$), 
-we sum up the gradient of all the entries in $\hat{A}$ that belong to the same row $\bar{u}_{i}$.  
+When we take the gradient of the objective function with respect to a row in the \emph{user} matrix \emph{U} (e.g. $\bar{u}_{i}$), we sum up the gradient of all the entries in $\hat{A}$ that belong to the same row $\bar{u}_{i}$.  
 \begin{equation} \label{eq:gradU}
 \frac{\text{d}f(U,V)}{\text{d}\bar{u}_i} = \sum_{j=1}^{nCols} \frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{u}_i}
 \end{equation}
@@ -39,7 +38,7 @@ Similarly, when we take the gradient with respect to a column of \emph{V} (e.g. 
 Both $\frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{u}_i}$ and $\frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{v}_j}$ are vectors of length \emph{nDims}, the number of latent dimensions.
 Specifically, $\frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{u}_i}$ is a \emph{1}-by-\emph{nDims} row vector;
 $\frac{\text{d}f(\bar{u}_i,\bar{v}_j)}{\text{d}\bar{v}_j}$ is a \emph{nDims}-by-\emph{1} column vector.
-Similarly, $\frac{\text{d}f(U,V)}{\text{d}\bar{u}_i}$ is a row vector, and $\frac{\text{d}f(U,V)}{\text{d}\bar{v}_j}$ is a column vector, of length \emph{nDims}.
+Similarly, the summed-up gradient $\frac{\text{d}f(U,V)}{\text{d}\bar{u}_i}$ is a row vector, and $\frac{\text{d}f(U,V)}{\text{d}\bar{v}_j}$ is a column vector, of length \emph{nDims}.
 
 In \emph{SAG}, storing only the summed-up gradients is not sufficient for matrix factorization.
 The reason is that, each iteration of \emph{SAG} requires the fine-grain gradients of individual entries 
@@ -102,8 +101,22 @@ After the update, \emph{SAG} then applies the updated memory $\bar{m}_{U}^{t+1}$
 \end{equation}
 
 %$\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$ are the memory of previously-computed gradients.  
-We apply \emph{SAG} into matrix factorization for two reasons.
+We apply \emph{SAG} into matrix factorization for two reasons.  
 First, \emph{SAG} has iteration cost as low as stochastic gradient (\emph{SG}).
 Second, \emph{SAG}'s convergence rate is faster than \emph{SG}, and sometimes as fast as full deterministic gradient (\emph{FG}).
-At a high level, a faster convergence rate implies a better optimization in a shorter amount of time when data-scientists prototype model-based recommender systems.
+
+\header{Convergence rate, Iteration cost, and Prototyping recommender systems.}
+At a high level, the ideal combination of a fast convergence rate and a low iteration cost implies a better optimization in a shorter amount of time when data-scientists prototype model-based recommender systems.
+An intuition behind gradient methods is that, at least for objective functions that are convex, the gradients guide the updates of $U^t$ and $V^t$ towards the direction of optimization.  
+Convergence rate measures how many iterations a gradient method is expected to take towards reaching optimization. 
+Iteration cost measures how many entries we sample per iteration.
+
+Full deterministic gradient has the best possible convergence rate because each iteration of \emph{FG} samples all $N$ entries in the dataset.
+However, while \emph{FG} is guaranteed to take a less number of iterations than \emph{SG} to reach optimization, sampling all $N$ entries per iteration slows down \emph{FG} overall because the optimization process would still take many iterations.
+Depending on the mathematical properties of the objective function, stochastic gradient often has much slower convergence rates because \emph{SG} samples only one or a few random entries per iteration.
+Therefore, while \emph{SG} has the lowest possible $\theta(1)$ iteration cost, overall \emph{SG} is still slow because \emph{SG} would take many more iterations to reach optimization.
+
+\emph{SAG} speeds-up the convergence rate by reusing the gradients of past samples.  
+Reusing past gradients enables \emph{SAG} to look at $\theta(1)$ samples per iteration and to achieve the lowest possible iteration cost.  
+Our evaluation illustrates that \emph{SAG} gives a better optimization with less time than \emph{FG} and \emph{SG}.  
 In this paper, we minimize the drawbacks or costs of using \emph{SAG} in matrix factorization while preserving \emph{SAG}'s benefits.
