@@ -20,12 +20,12 @@ Second, \tool performs a full deterministic gradient \emph{FG} just before \tool
 
 At the iteration that \tool performs a full deterministic gradient, we call it iteration $s$, \tool stores 4 matrices:
 \begin{sloppy}
-\begin{compactitem}
+\begin{compactenum}
 \item the actual \emph{user} matrix $U$ at iteration $s$: $U^{s}$
 \item the actual \emph{item} matrix $V$ at iteration $s$: $V^{s}$
 \item aggregated memory gradient for \emph{user} matrix $U$: $\bar{m}_{U}^{s}$
 \item aggregated memory gradient for \emph{item} matrix $V$: $\bar{m}_{V}^{s}$
-\end{compactitem}
+\end{compactenum}
 \end{sloppy}
 
 We should distinguish that $U^{s}$ and $V^{s}$ are stored \emph{just before} \tool performs a full deterministic gradient at iteration $s$.
