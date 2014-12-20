@@ -125,10 +125,34 @@ At every iteration, we keep track of the best quality optimization each gradient
 % subset of datasets
 
 \begin{figure*}
-\centerline{\scalebox{1.00}{\includegraphics[width=6.3in, natwidth=851,natheight=574]{approx.png}}}
+\centerline{\scalebox{1.00}{\includegraphics[width=6.1in, natwidth=851,natheight=574]{approx.png}}}
 \caption[Optimization Quality among gradient methods]{Optimization Quality vs. Time among Full Deterministic Gradient (\emph{FG}), Stochastic Gradient (\emph{SG}), and \tool.}
 \label{table:approx}
 \end{figure*}
 
 
-\header{Discussion.}
+\header{Results and Discussion.}
+In Figure \ref{table:approx}, the first 3 columns illustrate the best quality optimization each gradient method achieved across different objective functions and datasets.  
+Stochastic gradient (\emph{SG}) yielded 
+
+
+
+\subsection{Follow-up: \tool vs. Stochastic Gradient}
+\header{Methodology.}
+
+\begin{figure*}
+\centerline{\scalebox{1.00}{\includegraphics[width=8.2in, natwidth=1263,natheight=649]{followup.png}}}
+\caption[Follow-up Experiment]{Follow-up experiment to determine if Stochastic Gradient (\emph{SG}) can yield a better approximation than \tool if \emph{SG} given more time in terms of more iterations.}
+\label{table:followup}
+\end{figure*}
+
+
+
+\subsection{Space vs. Time}
+\header{Methodology.}
+
+\begin{figure*}
+\centerline{\scalebox{1.00}{\includegraphics[width=6.1in, natwidth=753,natheight=362]{memory.png}}}
+\caption[Memory usage after first iteration]{Memory usage between (\emph{FG}), Stochastic Gradient (\emph{SG}), and \tool after the first iteration of updating the CLiMF \cite{climf} objective function.}
+\label{table:memory}
+\end{figure*}
