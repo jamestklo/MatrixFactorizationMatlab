@@ -1,5 +1,33 @@
 \section{approach}
-\tool re-computes $\bar{m}_{entry(b).i}^{t}$ in equation \ref{eq:mu} and $\bar{m}_{entry(b).j}^{t}$ in equation \ref{eq:mv}.
-The chain-rule approach must store $min(M,N)$ versions of past matrices because 
+Similar to the chain-rule approach, \tool re-computes $\bar{m}_{entry(b).i}^{t}$ in equation \ref{eq:sag_mu} and $\bar{m}_{entry(b).j}^{t}$ in equation \ref{eq:sag_mv}:
+
+\begin{equation} \label{eq:sagre_mu}
+  \bar{m}_{U}^{t+1} = \bar{m}_{U}^{t} + \sum_{b=1}^{B}\left[\bar{m}_{entry(b).i}^{t+1} - \frac{\text{d}f(\bar{u}_{entry(b).i}^{s}, \bar{v}_{entry(b).j}^{s})}{\text{d}\bar{u}_{entry(b).i}^{s}} \right]
+\end{equation}
+
+The main difference is that, all 
+
+The chain-rule approach must store $min(M,N)$ different copies of past versions of $\bar{m}_{entry(b).i}^{t}$.
+There are two reasons.  First, each entry can come from a different iteration.  Second, the same entry may get sampled at more than one different iterations.  
+\tool resolves this issue, by predicting ahead the entires that we are going to sample.  
 
 
+\emph{Theorem 5.}
+\tool has convergence rate at least as fast as \emph{SAG}.
+\begin{proof}
+
+\end{proof}
+
+
+\emph{Theorem 6.}
+\tool has $\theta(1)$ asymptotic time-complexity and is as efficient as both \emph{SAG} and stochastic gradient.
+\begin{proof}
+\tool achieves the lowest possible asymptotic iteration cost.
+\end{proof}
+
+
+\emph{Theorem 7.}
+\tool has $\theta(N + nDims*(nRows+nCols))$ asymptotic space-complexity and is as compact as any memory-less gradient method.
+\begin{proof}
+Indeed, \tool achieves the best possible asymptotic space-complexity (\emph{Theorem 2}).
+\end{proof}

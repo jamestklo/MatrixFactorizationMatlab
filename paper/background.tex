@@ -48,8 +48,10 @@ As we will prove, when directly applied to matrix factorization without using ou
 \emph{M} is the number of \emph{distinct} entries that we have previously sampled.  At any iteration $t$, 
 \begin{equation} \label{eq:msampled}
 M \propto \sum_{l=1}^{t} B_l
-M \leq \sum_{l=1}^{t} B_l
 \end{equation}
+%\begin{equation} \label{mlessthan}
+%M \leq \sum_{l=1}^{t} B_l
+%\end{equation}
 $B_r$ is the batch size at ieration $l$; $l \leq t$.
 Usually the batch size $B$ is constant for all iterations; then $M$ is proportional to and is less than or equal to $B*t$.
 

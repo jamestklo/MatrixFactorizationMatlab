@@ -9,6 +9,7 @@ $\bar{m}_{entry(b).j}^{t}$ from equation \ref{eq:sag_mv}
 A na$\ddot{i}$ve approach is to store all these fine-grain graidents.  
 As we shall prove, the na$\ddot{i}$ve approach is undesirable because storing all these gradients would take up a lot of space.  
 
+
 %\newtheorem{totalspace}{}  
 \emph{Theorem 1.} 
 The total asymptotic space complexity is $\theta(nDims*(min(M,N)+nRows+nCols))$ for the na$\ddot{i}$ve approach of storing the fine-grain gradients of all entries that we had previously sampled.  
@@ -31,11 +32,13 @@ Thus the total amount of space that we use to store the aggregated gradients is 
 Adding the fine-grain gradients and the aggregated gradients together, the asymptotic space complexity becomes $\theta(nDims*(min(M,N)+nRows+nCols))$ after ignoring the constants.  
 \end{proof}
 
+
 \header{No guarantee that $min(M,N)$ is small.}
 If we can guarantee that $min(M,N)$ is small, or that $min(M,N)$ is asymptotically not larger than $nRows$ or $nCols$, 
 then the effective asymptotic space-complexity becomes $\theta(nDims*(nRows+nCols))$, which is the most compact anyone can possibly get.  Unfortunatley, we shall prove that there is no such guarantee.  
 
 First, we explore what the best possible asymptotical space-complexity can be in matrix factorization.
+
 
 \emph{Theorem 2.}
 $\Omega(N+nDims*(nRows+nCols))$ is the lower-bound asymptotic space-complexity in matrix factorization.
@@ -46,9 +49,11 @@ In each iteration of convex optimization, we must update $U$ and $V$, and use an
 Therefore, any matrix factorization algorithm would have an asymptotic space-complexity of at least $\Omega(N+nDims*(nRows+nCols))$.
 \end{proof}
 
+
 If we can guarantee that $min(M,N)$ is asymptotically not larger than $nRows$ or $nCols$, 
 then we can prove that the na$\ddot{i}$ve approach has already achieved the best possible asymptotic space-complexity, and that our challenge is irrelevant.
 However, we shall prove that such guarantee does not exist.
+
 
 \emph{Theorem 3.}  
 There is no guarantee that $min(M,N)$ is asymptotically not larger than $nRows$ or $nCols$.
@@ -71,6 +76,7 @@ Thus \tool does not enforce data-scientists to tolerate a high error.
 Given any objective function, the convergence rate of \emph{SAG} \cite{schmidt2013minimizing, roux2012stochastic} is always faster than stochastic gradient and is sometimes as fast as the fastest full deterministic gradient.
 \tool preserves the convergence rate of \emph{SAG}.
 \end{proof}
+
 
 \header{Chain rule offers no savings in matrix factorization.}
 In supervised machine-learning, we can use the chain-rule in differential-calculus to reduce space-complexity.
@@ -98,6 +104,7 @@ Consequently, $\frac{\text{d}f_{i}}{\text{d}\hat{y}_{i}}$ is also a $1$-by-$1$ s
 From equation \ref{eq:sml}, $\frac{\text{d}\hat{y}_{i}}{\text{d}\bar{\omega}}$ = $\left(\bar{x}_i\right)'$.
 Therefore, we can apply the chain rule and reduce space-complexity to $\theta(min(M,N)+d)$, because we can use the vector $\bar{x}_{i}$ to re-compute $\frac{\text{d}f_{i}}{\text{d}\bar{\omega}}$ from the scalar $\frac{\text{d}f_{i}}{\text{d}\hat{y}_{i}}$.
 
+
 \emph{Theorem 4.} 
 Applying the chain-rule for using \emph{SAG} in matrix facotrization would result in $\theta(min(M,N) + nDims*(min(M,N)+nRows+nCols))$ space.
 \begin{proof}
@@ -109,8 +116,6 @@ Therefore, we can rewrite the gradients as
 \begin{equation}
 \frac{\text{d}{f}}{\text{d}\bar{v}_{j}} = \left(\frac{\text{d}{f}}{\text{d}\hat{a}_{ij}}\right)\frac{\text{d}{\hat{a}_{ij}}}{\text{d}\bar{v}_{j}} = \left(\bar{u}_{i}\right)'\left(\frac{\text{d}{f}}{\text{d}\hat{a}_{ij}}\right)
 \end{equation}
-
-
 
 $\left(\frac{\text{d}{f}}{\text{d}\hat{a}_{ij}}\right)$ is a $1$-by-$1$ scalar, and the chain-rule approach stores $min(M,N)$ copies, occupying $\theta(min(M,N))$ space.
 
