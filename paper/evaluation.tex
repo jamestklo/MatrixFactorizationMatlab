@@ -8,16 +8,16 @@ Our first set of research questions focuses on optimization quality vs. time.
 Given more time, any gradient method yields a better optimization.  
 Our focus here is to identify which gradient method is the most suitable for data-scientists prototyping recommender systems.
 In terms of suitability, we mean the gradient method that yields the best quality optimization within the shortest amount of time.
-Here, we consider the general \emph{SAG} approach \emph{as is}. 
-The next set of research questions studies the specific \emph{space vs. time} trade-off between \tool and the na$\ddot{i}ve$ approach to \emph{SAG}.
+%Here, we consider the general \emph{SAG} approach \emph{as is}. 
+%The next set of research questions studies the specific \emph{space vs. time} trade-off between \tool and the na$\ddot{i}ve$ approach to \emph{SAG}.
 
 Between \emph{SAG}, full deterministic gradient and stochastic gradient,
 \begin{sloppy}
 \begin{compactenum}
 \item Which gradient method yields a better optimization given the same amount of time?
 \item Which gradient method uses the shortest amount of time to reach a similar quality of optimization?
-\item Can \emph{SAG} and specifically \tool work well with different objective functions in recommender systems?
-\item Can \emph{SAG} and specifically \tool work well with different matrix datasets?
+\item Can \tool work well with different objective functions in recommender systems?
+\item Can \tool work well with different matrix datasets?
 \end{compactenum}
 \end{sloppy}
 
@@ -104,7 +104,7 @@ Our MacBook Pro is the Late 2013 15-inch version \cite{macbookprolo}; it has OS-
 
 When studying \emph{Space vs. Time}, we measure memory usage after the first iteration.  
 Initially we plan to run all experiments on the MacBook Pro.
-However, the memory-profiing feature of Matlab works only on Windows.  
+However, the memory-profiing feature of Matlab works only on Windows.
 
 For the sub-datasets, we run the \emph{memory} experiment on a Dell XPS 12 \cite{dellxps12} laptop.
 The Dell XPS 12 has Windows 8.1, 1.6Ghz Intel i5 dual-core CPU, 4GB RAM, and integrated graphics.  
@@ -125,8 +125,8 @@ At every iteration, we keep track of the best quality optimization each gradient
 % subset of datasets
 
 \begin{figure*}
-\centerline{\scalebox{1.00}{\includegraphics[width=6.4in, natwidth=852,natheight=574]{approx.png}}}
-\caption[Optimization Quality among gradient methods]{Optimization quality vs. Time among Full Deterministic Gradient \emph{FG}, Stochastic Gradient \emph{SG}, and Stochastic Average Gradient \emph{SAG}.}
+\centerline{\scalebox{1.00}{\includegraphics[width=6.2in, natwidth=854,natheight=575]{approx.png}}}
+\caption[Optimization Quality among gradient methods]{Optimization Quality vs. Time among Full Deterministic Gradient (\emph{FG}), Stochastic Gradient (\emph{SG}), and \tool.}
 \label{table:approx}
 \end{figure*}
 
