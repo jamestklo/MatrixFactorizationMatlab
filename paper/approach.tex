@@ -2,11 +2,11 @@
 Similar to the chain-rule approach, \tool does not store and re-computes $\bar{m}_{entry(b).i}^{t}$ in equation \ref{eq:sag_mu} and $\bar{m}_{entry(b).j}^{t}$ in equation \ref{eq:sag_mv}:
 
 \begin{equation} \label{eq:sagre_mi}
-  \bar{m}_{entry(b).i}^{t} = recomputed  \frac{\text{d}f(\bar{u}_{entry(b).i}^{s}, \bar{v}_{entry(b).j}^{s})}{\text{d}\bar{u}_{entry(b).i}^{s}}
+  \bar{m}_{entry(b).i}^{t} =\:recomputed\:\:\frac{\text{d}f(\bar{u}_{entry(b).i}^{s}, \bar{v}_{entry(b).j}^{s})}{\text{d}\bar{u}_{entry(b).i}^{s}}
 \end{equation}
 
 \begin{equation} \label{eq:sagre_mj}
-  \bar{m}_{entry(b).j}^{t} = recomputed  \frac{\text{d}f(\bar{u}_{entry(b).i}^{s}, \bar{v}_{entry(b).j}^{s})}{\text{d}\bar{u}_{entry(b).j}^{s}}
+  \bar{m}_{entry(b).j}^{t} =\:recomputed\:\:\frac{\text{d}f(\bar{u}_{entry(b).i}^{s}, \bar{v}_{entry(b).j}^{s})}{\text{d}\bar{u}_{entry(b).j}^{s}}
 \end{equation}
 
 The chain-rule approach is undesirable because it must store $min(M,N)$ different copies of past versions of $\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$.
@@ -18,18 +18,34 @@ To save space, we must store as few copies of $\bar{m}_{entry(b).i}^{t}$ and $\b
 First, \tool predicts ahead the entires that we are going to sample.
 Second, \tool performs a full deterministic gradient \emph{FG} just before \tool re-samples the same entry.
 
-At the iteration that \tool performs a full deterministic gradient, \tool stores 4 matrices:
+At the iteration that \tool performs a full deterministic gradient, we call it iteration $s$, \tool stores 4 matrices:
+\begin{sloppy}
 \begin{compactitem}
+\item the actual \emph{user} matrix $U$ at iteration $s$: $U^{s}$
+\item the actual \emph{item} matrix $V$ at iteration $s$: $V^{s}$
 \item aggregated memory gradient for \emph{user} matrix $U$: $\bar{m}_{U}^{s}$
+\item aggregated memory gradient for \emph{item} matrix $V$: $\bar{m}_{V}^{s}$
 \end{compactitem}
+\end{sloppy}
+
+We should distinguish that $U^{s}$ and $V^{s}$ are stored \emph{just before} \tool performs a full deterministic gradient at iteration $s$.
+The significance is that we will use $U^{s}$ and $V^{s}$ to re-compute the fine-grain memory gradients at future iterations $t > s$.
+
+$\bar{m}_{U}^{s}$ and $\bar{m}_{V}^{s}$ are the direct outcome results of the full deterministic gradient.  
+The reason is that \emph{FG} samples all $N$ entries and thus resets every possible fine-grain gradient in memory.
+Thus we store $\bar{m}_{U}^{s}$ and $\bar{m}_{V}^{s}$ \emph{after} \tool performs an iteration of \emph{FG}.
 
 At the iterations in between \tool performs two \emph{FG}'s, \tool performs iterations of ordinary \emph{SAG}.
+When \tool performs ordinary \emph{SAG}, \tool computes but does \textbf{not store} the latest version of fine-grain gradients of individual entries: 
+\[
+\bar{m}_{entry(b).i}^{t+1} = \frac{\text{d}f(\bar{u}_{entry(b).i}, \bar{v}_{entry(b).j})}{\text{d}\bar{u}_{entry(b).i}}\:in\:equation\:\ref{eq:sag_mi}
+\]
+\[
+\bar{m}_{entry(b).j}^{t+1} = \frac{\text{d}f(\bar{u}_{entry(b).i}, \bar{v}_{entry(b).j})}{\text{d}\bar{v}_{entry(b).j}}\:in\:equation\:\ref{eq:sag_mj}
+\]
+Instead, \tool simply updates $\bar{m}_{U}^{s}$ and $\bar{m}_{V}^{s}$ with the newly computed fine-grain gradients, as equation \ref{eq:sag_mu} and equation \ref{eq:sag_mv} show.
 
-When \tool performs ordinary \emph{SAG}, \tool computes but does not store the latest version of fine-grain gradients of individual entries: 
-
-
-\tool updates the aggreated memory gradients: $\bar{m}_{U}^{t+1}$ in equation \ref{eq:sag_mu}, and $\bar{m}_{V}^{t+1}$ in equation \ref{eq:sag_mv}.
-To save space, \tool does not store the fine-grain gradients of individual entries, 
+Not storing the newly-computed fine-grain gradients saves $\theta(min(M,N)*nDims)$ space. 
 namely $\bar{m}_{entry(b).i}^{t+1}$ from equation \ref{eq:sag_mi}, and $\bar{m}_{entry(b).j}^{t+1}$ from equation \ref{eq:sag_mj}.
 
 The two steps together ensure that, the different entries that we are going to sample are \emph{distinct} before we perform a full deterministic gradient.
