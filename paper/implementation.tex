@@ -1,0 +1,14 @@
+\section{Implementation}
+\header{Matlab.}
+
+\header{Architecture.}
+We architect our implementation so that we implement \tool only once in only one file.
+Given an objective function, switching between gradient methods requires changing only one line of code.
+That line of code is easily identifiable, locatable, modifiable and self-contained.
+Changing that line of code also does not have any side-effects and does not require changing other lines of code.
+
+\header{Batch Parallelism.}
+When 
+Re-computation can also run in parallel to the computation of new gradients.  
+
+Moreover, 
