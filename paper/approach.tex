@@ -43,15 +43,18 @@ When \tool performs ordinary \emph{SAG}, \tool computes but does \textbf{not sto
 \[
 \bar{m}_{entry(b).j}^{t+1} = \frac{\text{d}f(\bar{u}_{entry(b).i}, \bar{v}_{entry(b).j})}{\text{d}\bar{v}_{entry(b).j}}\:in\:equation\:\ref{eq:sag_mj}
 \]
-Instead, \tool simply updates $\bar{m}_{U}^{s}$ and $\bar{m}_{V}^{s}$ with the newly computed fine-grain gradients, as equation \ref{eq:sag_mu} and equation \ref{eq:sag_mv} show.
+\tool simply updates $\bar{m}_{U}^{s}$ and $\bar{m}_{V}^{s}$ with the newly computed fine-grain gradients, as equation \ref{eq:sag_mu} and equation \ref{eq:sag_mv} show.
 
-Not storing the newly-computed fine-grain gradients saves $\theta(min(M,N)*nDims)$ space. 
-namely $\bar{m}_{entry(b).i}^{t+1}$ from equation \ref{eq:sag_mi}, and $\bar{m}_{entry(b).j}^{t+1}$ from equation \ref{eq:sag_mj}.
+Predicting upcoming entries ahead of time ensures that, at iterations $t > s$, 
+the different entries that we are going to sample are \textbf{distinct} before we perform another iteration of full deterministic gradient.
+The significance of having \emph{distinct} entries is that, we can \emph{re-compute} all possible fine-grain gradients of individual entries 
+(e.g. $\bar{m}_{entry(b).i}^{t}$ in equation \ref{eq:sag_mu} and $\bar{m}_{entry(b).j}^{t}$ in equation \ref{eq:sag_mv}) 
+from a single copy of the \emph{user} matrix $U^{s}$ and \emph{item} matrix $V^{s}$, that \tool stored at the same iteration $s$.
 
-The two steps together ensure that, the different entries that we are going to sample are \emph{distinct} before we perform a full deterministic gradient.
-The significance of having \emph{distinct} entries is that, 
-we can re-compute all fine-grain gradients of individual entries (e.g. $\bar{m}_{entry(b).i}^{t}$ in equation \ref{eq:sag_mu} and $\bar{m}_{entry(b).j}^{t}$ in equation \ref{eq:sag_mv}) 
-from a single copy of the \emph{user} matrix $U^{s}$ and \emph{item} matrix $V^{s}$.
+At iterations $t > s$, we do not need to store any $\bar{m}_{entry(b).i}^{t+1}$ or any $\bar{m}_{entry(b).j}^{t+1}$.
+The reason is that before we re-sample the same entry, we perform an iteration of \emph{FG}.
+The purpose of an iteration of \emph{FG} is to reset all fine-grain gradients of individual entries, so that we do not need to store them.
+Not storing the newly-computed fine-grain gradients saves $\theta(min(M,N)*nDims)$ space.
 
 
 \emph{Theorem 5.}
