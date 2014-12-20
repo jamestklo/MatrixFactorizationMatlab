@@ -11,7 +11,7 @@ As we shall prove, the na$\ddot{i}$ve approach is undesirable because storing al
 
 %\newtheorem{totalspace}{}  
 \emph{Theorem 1.} 
-The total asymptotic space complexity is $\theta(nDims*(min(M,N)+nRows+nCols))$ for storing the fine-grain gradients of all entries that we had previously sampled.  
+The total asymptotic space complexity is $\theta(nDims*(min(M,N)+nRows+nCols))$ for the na$\ddot{i}$ve approach of storing the fine-grain gradients of all entries that we had previously sampled.  
 \begin{proof}
 For each individual entry, the amount of space required is $2*nDims$:  
 the gradient with respect to row $\bar{u}_i$ ($\bar{m}_{entry(b).i}^{t}$) is a \emph{1}-by-\emph{nDims} row vector;  
