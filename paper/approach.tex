@@ -70,12 +70,12 @@ Next we prove \tool preserves the theoretical advantages of \emph{SAG}, and \too
 \tool has convergence rate at least as fast as \emph{SAG}.
 \begin{proof}
 The proofs of \emph{SAG}'s convergence rates \cite{schmidt2013minimizing, roux2012stochastic} do not restrict where the starting points are for optimization.
-In matrix factorization, the significance is that we can start \emph{SAG} with any (random) matrices $U$ and $V$ (e.g. $U^{S}$ and $V^{S}$)
+In matrix factorization, the meaning is that we can start \emph{SAG} with any (random) matrices $U$ and $V$ (e.g. $U^{S}$ and $V^{S}$)
 and still experience the convergence rates of \emph{SAG}.
 Therefore, at iterations that \tool performs \emph{SAG}, \tool has convergence rate equal to \emph{SAG}.
 Similarily, the convergences rates of full determinsitic gradient (\emph{FG}) allows any $U$ and $V$ as the starting matrices.
 Therefore, when \tool performs \emph{FG}, \tool inherits the convergence rates of \emph{FG}.
-\emph{FG} has the fastest convergence rates.  
+\emph{FG} has the fastest convergence rates.
 Therefore, at any iteration, \tool has convergence rates at least as fast as \emph{SAG}.
 \end{proof}
 
@@ -86,7 +86,7 @@ Therefore, at any iteration, \tool has convergence rates at least as fast as \em
 At iteartions that \tool performs \emph{SAG}, we totally re-compute the past versions of the fine-grain gradients for the same batch of samples. 
 The re-computing done by \tool essentially doubles the amount of computation compared to \emph{SAG} and stochastic gradient.
 Doubling the amount of computation multiplies time-complexity by only a constant; 
-thus \tool preserves the low iteration cost of \emph{SAG}.  
+thus \tool preserves the low iteration cost of \emph{SAG}.
 
 The interesting case is when \tool performs an iteration of \emph{FG}, because an iteration of \emph{FG} samples all $N$ entries.
 After an iteration of \emph{FG}, $N$ is also the maximum number of \emph{distinct} entries that \tool can predict ahead. 
@@ -96,12 +96,23 @@ Tripling also multiplies overall time-complexity by only a constant.
 Without loss of generality, \tool posseses $\theta(1)$ iteration cost even when \tool performs iterations of \emph{FG} (up to) a constant number of times for every $\theta(N)$ iteraions.
 %\tool achieves the lowest possible asymptotic $\theta(1)$ iteration cost.
 
-%A special case happens when the number of iterations  
+%A special case happens when the number of iterations 
+Our evaluation will illustrate that, despite tripling the itearation cost, \tool still returns the best optimizations within the shortest time.
 \end{proof}
 
 
 \emph{Theorem 7.}
 \tool has $\theta(N + min(M,N) + nDims*(nRows+nCols))$ space-complexity and is asymptotically as compact as any memory-less gradient method.
 \begin{proof}
-\tool also achieves the best possible asymptotic space-complexity (\emph{Theorem 2}).
+$U^{s}$ and $\bar{m}_U^{s}$ are $nRows$-by-$nDims$ matrices.
+$V^{s}$ and $\bar{m}_V^{s}$ are $nDims$-by-$nCols$ matrices.
+
+\tool also stores the indices of entries that \tool is going to sample in the future; these indices take $\theta(min(E[M],N))$ space.
+When $M > N$, $min(M,N)$ returns $N$; and space-complexity becomes $\theta(N + N + nDims*(nRows+nCols))$.
+When $N > M$, space complexity becomes $O(N + N + nDims*(nRows+nCols))$.
+
+The extra matrices and indices that \tool stores does not asymptotically increase the most-compact possible space-complexity (\emph{Theorem 2}).
+Both full deterministic gradient \emph{FG} and stochastic gradient \emph{SG} are memory-less methods and thus they also achieve the most-compact possible space-complexity in \emph{Theorem 2}.
+Indeed, \tool is as compact as any memory-less method because the space-complexity does not become any more compact than what is proved in \emph{Theorem 2}.
+Our evaluation will illustrate that the actual memory usage are similar among \tool, \emph{FG} and \emph{SG}.
 \end{proof}
