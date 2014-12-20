@@ -35,7 +35,7 @@ $\bar{m}_{U}^{s}$ and $\bar{m}_{V}^{s}$ are the direct outcome results of the fu
 The reason is that \emph{FG} samples all $N$ entries and thus resets every possible fine-grain gradient in memory.
 Thus we store $\bar{m}_{U}^{s}$ and $\bar{m}_{V}^{s}$ \emph{after} \tool performs an iteration of \emph{FG}.
 
-At the iterations in between \tool performs two \emph{FG}'s, \tool performs iterations of ordinary \emph{SAG}.
+At the iterations $t$ in between \tool performs two \emph{FG}'s, e.g. $s < t < s'$, \tool performs iterations of ordinary \emph{SAG}.
 When \tool performs ordinary \emph{SAG}, \tool computes but does \textbf{not store} the latest version of fine-grain gradients of individual entries: 
 \[
 \bar{m}_{entry(b).i}^{t+1} = \frac{\text{d}f(\bar{u}_{entry(b).i}, \bar{v}_{entry(b).j})}{\text{d}\bar{u}_{entry(b).i}}\:in\:equation\:\ref{eq:sag_mi}
@@ -45,15 +45,18 @@ When \tool performs ordinary \emph{SAG}, \tool computes but does \textbf{not sto
 \]
 \tool simply updates $\bar{m}_{U}^{s}$ and $\bar{m}_{V}^{s}$ with the newly computed fine-grain gradients, as equation \ref{eq:sag_mu} and equation \ref{eq:sag_mv} show.
 
-Predicting upcoming entries ahead of time ensures that, at iterations $t > s$, 
-the different entries that we are going to sample are \textbf{distinct} before we perform another iteration of full deterministic gradient.
-The significance of having \emph{distinct} entries is that, we can \emph{re-compute} all possible fine-grain gradients of individual entries 
-(e.g. $\bar{m}_{entry(b).i}^{t}$ in equation \ref{eq:sag_mu} and $\bar{m}_{entry(b).j}^{t}$ in equation \ref{eq:sag_mv}) 
-from a single copy of the \emph{user} matrix $U^{s}$ and \emph{item} matrix $V^{s}$, that \tool stored at the same iteration $s$.
+After we perform an iteration of \emph{FG}, we also predict upcoming entries ahead of time.
+Therefore, at future iterations $t > s$ after a \emph{FG}, we ensure that the different entries that we are going to sample are \textbf{distinct} before we perform another iteration of full deterministic gradient.
+The significance of having \emph{distinct} entries is that, at future iterations $t > s$, we will not overwrite any fine-grain gradient of individual entries 
+(e.g. $\bar{m}_{entry(b).i}^{t}$ in equation \ref{eq:sag_mu} and $\bar{m}_{entry(b).j}^{t}$ in equation \ref{eq:sag_mv}).
+Therefore, we can \emph{re-compute} all possible fine-grain gradients of individual entries 
+from a single copy of the \emph{user} matrix $U^{s}$ and the \emph{item} matrix $V^{s}$, 
+that \tool stored at the same iteration $s$.
 
-At iterations $t > s$, we do not need to store any $\bar{m}_{entry(b).i}^{t+1}$ or any $\bar{m}_{entry(b).j}^{t+1}$.
+Before we perform another iteration of \emph{FG}, we do not need to store any $\bar{m}_{entry(b).i}^{t+1}$ or any $\bar{m}_{entry(b).j}^{t+1}$.
 The reason is that before we re-sample the same entry, we perform an iteration of \emph{FG}.
-The purpose of an iteration of \emph{FG} is to reset all fine-grain gradients of individual entries, so that we do not need to store them.
+The purpose of an iteration of \emph{FG} is to reset all fine-grain gradients of individual entries at the same iteration $s$, 
+so that we will not  the fine-grain gradients rather than storing them.
 Not storing the newly-computed fine-grain gradients saves $\theta(min(M,N)*nDims)$ space.
 
 
