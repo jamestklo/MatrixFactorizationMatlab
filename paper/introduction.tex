@@ -44,8 +44,8 @@ To the best of our knowledge, we are the first to
 \item Propose Stochastic Average Gradient (\emph{SAG}) as a viable alternative for yielding higher quality optimizations while enjoying a low iteration cost.  
 \item Extend \emph{SAG} into \tool for matrix factorization, resolve the space complexity challenge in adapting \emph{SAG} from the domain of large-scale supervised-machine-learning into the domain of prototyping recommender algorithms.  
 \item Prove in theory, that \tool has a convergence rate as fast as the original \emph{SAG}; \tool has asymptotic time complexity as efficient as any gradient method with the lowest iteration cost, and \tool has asymptotic space complexity as compact as any memoryless gradient method.  
-\item Extensively evaluate and compare \tool across multiple RecSys objective functions and diverse datasets.  
-\item Demonstrate in practice that, even without any optimization or fine-tuning on the implementation, \tool still yields the best optimization within the shortest time despite the additional time of re-computation, and that \tool uses memory at a level similar to the memory-less stochastic gradient. 
-\item Provide an follow-up evidence that both full deterministic gradient and stochastic gradient takes much longer to reach a quality of optimization similar to \tool.
+\item Extensively evaluate and compare \tool with \emph{FG} and \emph{SG} across multiple RecSys objective functions and diverse datasets.  
+\item Demonstrate in practice that, even without any optimization or fine-tuning on the implementation, \tool still yields the best optimization within the shortest time despite the additional time of re-computation, and that \tool uses memory at a level similar to full deterministic gradient and stochastic gradient, both of which are memory-less. 
+\item Provide follow-up evidence that both full deterministic gradient and stochastic gradient takes much longer to reach a quality of optimization similar to \tool.
 \end {compactitem}
 \end{sloppy}
