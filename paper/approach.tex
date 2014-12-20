@@ -45,37 +45,63 @@ When \tool performs ordinary \emph{SAG}, \tool computes but does \textbf{not sto
 \]
 \tool simply updates $\bar{m}_{U}^{s}$ and $\bar{m}_{V}^{s}$ with the newly computed fine-grain gradients, as equation \ref{eq:sag_mu} and equation \ref{eq:sag_mv} show.
 
-After we perform an iteration of \emph{FG}, we also predict upcoming entries ahead of time.
+After we perform an iteration of \emph{FG}, we predict upcoming entries ahead of time.
 Therefore, at future iterations $t > s$ after a \emph{FG}, we ensure that the different entries that we are going to sample are \textbf{distinct} before we perform another iteration of full deterministic gradient.
-The significance of having \emph{distinct} entries is that, at future iterations $t > s$, we will not overwrite any fine-grain gradient of individual entries 
-(e.g. $\bar{m}_{entry(b).i}^{t}$ in equation \ref{eq:sag_mu} and $\bar{m}_{entry(b).j}^{t}$ in equation \ref{eq:sag_mv}).
+The significance of having \emph{distinct} entries is that, at future iterations $t > s$, we will not overwrite any fine-grain gradient of individual entries:
+e.g. $\bar{m}_{entry(b).i}^{t}$ in equation \ref{eq:sag_mu} and $\bar{m}_{entry(b).j}^{t}$ in equation \ref{eq:sag_mv}.
 Therefore, we can \emph{re-compute} all possible fine-grain gradients of individual entries 
 from a single copy of the \emph{user} matrix $U^{s}$ and the \emph{item} matrix $V^{s}$, 
 that \tool stored at the same iteration $s$.
 
-Before we perform another iteration of \emph{FG}, we do not need to store any $\bar{m}_{entry(b).i}^{t+1}$ or any $\bar{m}_{entry(b).j}^{t+1}$.
-The reason is that before we re-sample the same entry, we perform an iteration of \emph{FG}.
-The purpose of an iteration of \emph{FG} is to reset all fine-grain gradients of individual entries at the same iteration $s$, 
-so that we will not  the fine-grain gradients rather than storing them.
+Before we perform another iteration of \emph{FG}, we do not store any fine-grain gradient $\bar{m}_{entry(b).i}^{t+1}$ or any $\bar{m}_{entry(b).j}^{t+1}$.
+The reason is that we do not ever need them: \tool ensures that we will perform an iteration of \emph{FG} before we re-sample any identical entry. 
+The purpose of an iteration of \emph{FG} at iteration $s' > t$ is to reset all fine-grain gradients of individual entries at the same iteration $s'$.
+This way we will not need any of the fine-grain gradients at iterations $t < s'$ because we will not visit the same entries again until after we do a full reset.
 Not storing the newly-computed fine-grain gradients saves $\theta(min(M,N)*nDims)$ space.
 
+\tool re-computes the indivdiaul fine-grain gradients from the raw $U^{s}$ and $V^{s}$ matrices; doing so preserves generality.
+We do not use the chain-rule: not all objective functions is compatible with it.
+Both \cite{climf, bpr} do not work with the chain-rule because computing the fine-grain gradient of an entry requires not just ($\hat{a}_{ij} = \bar{u}_{i}*\bar{v}_{j}$), 
+but also ($\hat{a}_{ik} = \bar{u}_{i}*\bar{v}_{k}$) for all $k \neq j$.
+
+Next we prove \tool preserves the theoretical advantages of \emph{SAG}, and \tool is compact in space.
 
 \emph{Theorem 5.}
 \tool has convergence rate at least as fast as \emph{SAG}.
 \begin{proof}
-
+The proofs of \emph{SAG}'s convergence rates \cite{schmidt2013minimizing, roux2012stochastic} do not restrict where the starting points are for optimization.
+In matrix factorization, the significance is that we can start \emph{SAG} with any (random) matrices $U$ and $V$ (e.g. $U^{S}$ and $V^{S}$)
+and still experience the convergence rates of \emph{SAG}.
+Therefore, at iterations that \tool performs \emph{SAG}, \tool has convergence rate equal to \emph{SAG}.
+Similarily, the convergences rates of full determinsitic gradient (\emph{FG}) allows any $U$ and $V$ as the starting matrices.
+Therefore, when \tool performs \emph{FG}, \tool inherits the convergence rates of \emph{FG}.
+\emph{FG} has the fastest convergence rates.  
+Therefore, at any iteration, \tool has convergence rates at least as fast as \emph{SAG}.
 \end{proof}
 
 
 \emph{Theorem 6.}
-\tool has $\theta(1)$ asymptotic time-complexity and is as efficient as both \emph{SAG} and stochastic gradient.
+\tool has $\theta(1)$ time-complexity and is asymptotically as efficient as both \emph{SAG} and stochastic gradient.
 \begin{proof}
-\tool achieves the lowest possible asymptotic iteration cost.
+At iteartions that \tool performs \emph{SAG}, we totally re-compute the past versions of the fine-grain gradients for the same batch of samples. 
+The re-computing done by \tool essentially doubles the amount of computation compared to \emph{SAG} and stochastic gradient.
+Doubling the amount of computation multiplies time-complexity by only a constant; 
+thus \tool preserves the low iteration cost of \emph{SAG}.  
+
+The interesting case is when \tool performs an iteration of \emph{FG}, because an iteration of \emph{FG} samples all $N$ entries.
+After an iteration of \emph{FG}, $N$ is also the maximum number of \emph{distinct} entries that \tool can predict ahead. 
+Spread over $\theta(N)$ iterations, the overhead associated with an iteration of \emph{FG} armortizes to $\theta(1)$ over time.
+In average, the re-computation and armortization together triple \tool's expected iteration cost over time. 
+Tripling also multiplies overall time-complexity by only a constant. 
+Without loss of generality, \tool posseses $\theta(1)$ iteration cost even when \tool performs iterations of \emph{FG} (up to) a constant number of times for every $\theta(N)$ iteraions.
+%\tool achieves the lowest possible asymptotic $\theta(1)$ iteration cost.
+
+%A special case happens when the number of iterations  
 \end{proof}
 
 
 \emph{Theorem 7.}
-\tool has $\theta(N + min(M,N) + nDims*(nRows+nCols))$ asymptotic space-complexity and is as compact as any memory-less gradient method.
+\tool has $\theta(N + min(M,N) + nDims*(nRows+nCols))$ space-complexity and is asymptotically as compact as any memory-less gradient method.
 \begin{proof}
-Indeed, \tool achieves the best possible asymptotic space-complexity (\emph{Theorem 2}).
+\tool also achieves the best possible asymptotic space-complexity (\emph{Theorem 2}).
 \end{proof}
