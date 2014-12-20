@@ -1,9 +1,9 @@
-\section{Evalulation}
+\section{Evaluation}
 
 
-\subsection{Research Questions.}
+\subsection{Research Questions}
 
-\header{Quality vs. Time}
+\header{Quality vs. Time.}
 Our first set of research questions focuses on optimization quality vs. time.
 Given more time, any gradient method yields a better optimization.  
 Our focus here is to identify which gradient method is the most suitable for data-scientists prototyping recommender systems.
@@ -22,28 +22,89 @@ Between \emph{SAG}, full deterministic gradient and stochastic gradient,
 \end{sloppy}
 
 
-\header{Space vs. Time}
+\header{Space vs. Time.}
 Our second set of research questions investigates whether re-computing is worth the additional time.
 Here, we investigate the actual space vs. time trade-off between \tool vs. the na$\ddot{i}$ve approach to \emph{SAG}:
+
 Compared to the na$\ddot{i}ve$ approach to SAG, in practice
 \begin{sloppy}
-\begin{compactitem}
+\begin{compactenum}
+\setcounter{enumi}{4}
 \item How much slower is \tool due to re-computing?
 \item How much memory does \tool save?
-\end{compactitem}
+\end{compactenum}
 \end{sloppy}
 
 
 
+\subsection{Experimental Setup}
+
 \header{Objective Functions.}
+The objective functions we choose already uses full deterministic gradient (\emph{FG}) or stochastic gradient (\emph{SG}).  
+In general, any function that is differentiable, and specifically any function that uses (\emph{FG}) or (\emph{SG}) can use \emph{SAG} and \tool.
+If a function is convex, then gradient methods guarantee a global optimum over time.
 % cite objective functions
+\begin{sloppy}
+\begin{compactenum}
+\item Least-squares: L2 and its variants \cite{mnar, wrmf2008hu, wrmf2008pan} are popular objective functions when building recommender systems.
+\item CLiMF \cite{climf}: Collaborative-Less-is-More-Filtering uses ordinal logistic regression to smooth the mean reciprocal rank function and to learn how a user ranks different items; 
+CLiMF performs gradient ascent because the optimization goal is to maximize an objective function.
+\item BPR-MF \cite{bpr}: Bayseian Personalized Learning has an objective function that minimizes 
+the difference between any two \emph{item} ratings (column entries) of the same user (same row).
+BPR-MF performs gradient descent.
+\end{compactenum}
+\end{sloppy}
 
 
-
-\header{Datasets}
+\header{Sub-datasets.}
 % cite datasets
 
 
+\header{Hyper Parameters.}
+For the purpose of comparison, we standardize all hyper-parameters across all objective functions, all datasets, and all gradient methods.
+The only exception is that we run full deterministic gradient \emph{FG}) for only 500 iterations vs. 5,000 for stochastic gradient (\emph{SG}) and \emph{SAG}.
 
-\header{Experiment Setup}
+Convergence theory guarantees that given the same number of iterations, \emph{FG} yields a much better quality optimization than \emph{SG}.
+However, our goal is to identify the gradient method that yields the best quality optimization within the shortest amount of time.
+Therefore, we want to see whether \emph{FG} would take longer to yield a similar quality of optimization as \emph{SG}, and how much longer.
+Through experience with our objective functions and datasets, we observed that 500 iterations \emph{FG} yields a similar quality of optimization as \emph{SG}.
+As a result, we run \emph{FG} to 500 iterations, and compare how much longer 500 iterations of \emph{FG} would take than 5000 iterations of \emph{SG}.
+
+\begin{sloppy}
 % a table?
+\begin{compactitem}
+\item Step size or learning rate: 0.0001
+\item Regularization $\lambda$: 0.001; $\lambda$ is identical for regularizing both \emph{user} matrix $U$ and \emph{item} matrix $V$
+\item Iterations: 5000 for \emph{SG} and \emph{SAG}, which is roughly 10\% of the number of non-zero entries in each sub-dataset.
+\item Latent dimensions ($nDims$): 5 
+\end{compactitem}
+\end{sloppy}
+
+For gradient descent, step size is $\alpha < 0$ and $\lambda > 0$;
+for ascent, step size is $\alpha > 0$ and $\lambda < 0$.
+
+
+\header{Hardware and OS.}
+A MacBook Pro run all experiments that study optimization \emph{Quality vs. Time}.
+Our MacBook Pro is the Late 2013 15-inch version \cite{macbookprolo}; it has OS-X Yosemite, 2.3Ghz Intel i7 quad-core CPU, 16GB RAM, and a Nvidia 750M GPU.
+
+When studying \emph{Space vs. Time}, we measure memory usage after the first iteration.  
+Initially we plan to run all experiments on the MacBook Pro.
+However, the memory-profiing feature of Matlab works only on Windows.  
+
+For the sub-datasets, we run the \emph{memory} experiment on a Dell XPS 12 \cite{dellxps12} laptop.
+The Dell XPS 12 has Windows 8.1, 1.6Ghz Intel i5 dual-core CPU, 4GB RAM, and integrated graphics.  
+
+For the full datasets, we run the \emph{memory} experiment on a remote server that has more RAM.
+Our remote server has Windows Server 2008R2, 2.50Ghz Intel Xeon 2x quad-core CPUs (total 8 CPU cores) and 16GB RAM.
+
+Both MacBook Pro and remote server have Matlab R2014a; Dell XPS 12 has Matlab R2012a.
+All 3 computers have the Matlab parallel computing toolkit.
+
+
+
+\subsection{Quality vs. Time}
+%\header{Methodology.}
+For the purpose of comparison, we fix the seed for generating random numbers so that 
+Measure optimization quaity in each iteration. report the best optimixatiom 
+
