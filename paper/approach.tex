@@ -1,20 +1,41 @@
 \section{approach}
-Similar to the chain-rule approach, \tool re-computes $\bar{m}_{entry(b).i}^{t}$ in equation \ref{eq:sag_mu} and $\bar{m}_{entry(b).j}^{t}$ in equation \ref{eq:sag_mv}:
+Similar to the chain-rule approach, \tool does not store and re-computes $\bar{m}_{entry(b).i}^{t}$ in equation \ref{eq:sag_mu} and $\bar{m}_{entry(b).j}^{t}$ in equation \ref{eq:sag_mv}:
 
-\begin{equation} \label{eq:sagre_mu}
+\begin{equation} \label{eq:sagre_mi}
   \bar{m}_{entry(b).i}^{t} = recomputed  \frac{\text{d}f(\bar{u}_{entry(b).i}^{s}, \bar{v}_{entry(b).j}^{s})}{\text{d}\bar{u}_{entry(b).i}^{s}}
 \end{equation}
 
-\begin{equation} \label{eq:sagre_mu}
+\begin{equation} \label{eq:sagre_mj}
   \bar{m}_{entry(b).j}^{t} = recomputed  \frac{\text{d}f(\bar{u}_{entry(b).i}^{s}, \bar{v}_{entry(b).j}^{s})}{\text{d}\bar{u}_{entry(b).j}^{s}}
 \end{equation}
 
 The chain-rule approach is undesirable because it must store $min(M,N)$ different copies of past versions of $\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$.
-There are two reasons.  First, each entry can come from a different iteration.  Second, the same entry may get sampled at more than one different iterations.
+There are two problems.  First, each entry can come from a different iteration; or different entries can come from different iterations.
+Second, the same entry may get sampled more than once at two or more different iterations.
 
-To save space, we must store as few copies of $\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$ as possible.  
-\tool resolves this issue, by predicting ahead the entires that we are going to sample, and ensures that the samples we are going to sample are distinct.  
-\tool ensures that 
+To save space, we must store as few copies of $\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$ as possible.
+\tool resolves the two problems above with two steps.
+First, \tool predicts ahead the entires that we are going to sample.
+Second, \tool performs a full deterministic gradient \emph{FG} just before \tool re-samples the same entry.
+
+At the iteration that \tool performs a full deterministic gradient, \tool stores 4 matrices:
+\begin{compactitem}
+\item aggregated memory gradient for \emph{user} matrix $U$: $\bar{m}_{U}^{s}$
+\end{compactitem}
+
+At the iterations in between \tool performs two \emph{FG}'s, \tool performs iterations of ordinary \emph{SAG}.
+
+When \tool performs ordinary \emph{SAG}, \tool computes but does not store the latest version of fine-grain gradients of individual entries: 
+
+
+\tool updates the aggreated memory gradients: $\bar{m}_{U}^{t+1}$ in equation \ref{eq:sag_mu}, and $\bar{m}_{V}^{t+1}$ in equation \ref{eq:sag_mv}.
+To save space, \tool does not store the fine-grain gradients of individual entries, 
+namely $\bar{m}_{entry(b).i}^{t+1}$ from equation \ref{eq:sag_mi}, and $\bar{m}_{entry(b).j}^{t+1}$ from equation \ref{eq:sag_mj}.
+
+The two steps together ensure that, the different entries that we are going to sample are \emph{distinct} before we perform a full deterministic gradient.
+The significance of having \emph{distinct} entries is that, 
+we can re-compute all fine-grain gradients of individual entries (e.g. $\bar{m}_{entry(b).i}^{t}$ in equation \ref{eq:sag_mu} and $\bar{m}_{entry(b).j}^{t}$ in equation \ref{eq:sag_mv}) 
+from a single copy of the \emph{user} matrix $U^{s}$ and \emph{item} matrix $V^{s}$.
 
 
 \emph{Theorem 5.}

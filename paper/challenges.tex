@@ -59,26 +59,25 @@ However, we shall prove that such guarantee does not exist.
 There is no guarantee that $min(M,N)$ is asymptotically not larger than $nRows$ or $nCols$.
 \begin{proof}
 $N$ is the number of non-zero entries in the matrix $A$.
-Unless there is, or unless we are restricted to an upper-bound of sparsity, then $N$ must have $O(nRows*nCols)$ space.
+Unless there is, or unless we are restricted to an upper-bound of matrix density, then $N$ must have an uppder-bound of $O(nRows*nCols)$ space.
 
 $M$ is the number of \emph{distinct} entries that we previously sampled.
 According to equation \ref{eq:msampled}, $M$ depends on the batch size at each iteration $B_l$, and the number of iterations previously done $t-1$.
 Usually, the batch size is a constant $B$.  Thus the lower bound of $M$ most likely depends on the lower bound of $t$.
 However, the lower bound of $t$ depends on the convergence rate, and the tolerance of error $\epsilon$.
-For example, if the convergence rate is exponential (e.g. $O(p^t)$), then the loewr bound of $t$ is $\Omega(log(\frac{1}{\epsilon}))$.
+For example, if the convergence rate is exponential (e.g. $O(p^t)$), then the lower bound of $t$ is $\Omega(log(\frac{1}{\epsilon}))$.
 %$p$ is a constant calculated from the Hessians of the objective function; $0 \leq p \leq 1$.
 %Convergence rate depends on the combination of both the underlying objective function, and the gradient method being used.
 %For example, for a given objective function, both full deterministic gradient and stochastic average gradient may yield the fast exponential convergence $O(p^t)$.
 Therefore, the lower bound of $M$ does not depend on $N$, $nRows$ or $nCols$.
-Given a dataset, the only way to enforce $M \leq N$ is to either tolerate a high error, or to find a combination of objective function and gradient method that yields the fastest convergence rate as possible.
-The asymptotic space-complexity of using \tool does not depend on $M$.
-Thus \tool does not enforce data-scientists to tolerate a high error.
+Given a dataset, the only way to enforce $M \leq N$ is to either tolerate a high error, or to find a combination of objective function and gradient method that yields the fastest convergence rate  possible.
+The asymptotic space-complexity of \tool is compact enough so that \tool does not enforce data-scientists to tolerate a high error.
 Given any objective function, the convergence rate of \emph{SAG} \cite{schmidt2013minimizing, roux2012stochastic} is always faster than stochastic gradient and is sometimes as fast as the fastest full deterministic gradient.
 \tool preserves the convergence rate of \emph{SAG}.
 \end{proof}
 
 
-\header{Chain rule offers no savings in matrix factorization.}
+\header{Using chain rule worsens space-complexity in matrix factorization.}
 In supervised machine-learning, we can use the chain-rule in differential-calculus to reduce space-complexity.
 Unfortunately, applying the chain-rule in matrix-factorization would result in a space-complexity larger than the na$\ddot{i}$ve approach.
 
@@ -123,7 +122,7 @@ Unfortunately both $U$ and $V$ change over time in matrix factorization.
 When we apply the chain-rule, we cannot just use the current versions of $\bar{u}_{i}$ and $\bar{v}_{j}$.
 We must use and thus must store the past versions of $\bar{u}_{i}^{l}$ and $\bar{v}_{j}^{l}$ at the last time $l$ that the entry $a_{ij}$ (in matrix $A$) was sampled.
 Both $\bar{u}_{i}^{l}$ and $\bar{v}_{j}^{l}$ are vectors of length $nDims$.
-Therefore, using the chain rule induces an additional $min(M,N)*2*nDims$ space.
+Therefore, using the chain rule induces an additional ($min(M,N)*2*nDims$) space.
 When we include the memory of aggregated gradients $\bar{m}_{U}$ and $\bar{m}_{V}$, the total space-complexity becomes larger than the na$\ddot{i}$ve approach with $\theta(min(M,N) + nDims*(min(M,N)+nRows+nCols))$ space.
 The chain-rule approach yields space savings in supervised machine-learning because $\bar{x}_{i}$ does not change over time; 
 so there is no need to store past versions of $\bar{x}_{i}$.
