@@ -50,13 +50,14 @@ If we can guarantee that $min(M,N)$ is asymptotically not larger than $nRows$ or
 then we can prove that the na$\ddot{i}$ve approach has already achieved the best possible asymptotic space-complexity, and that our challenge is irrelevant.
 However, we shall prove that such guarantee does not exist.
 
-\emph{Theorem 3.}  There is no guarantee that $min(M,N)$ is asymptotically not larger than $nRows$ or $nCols$.
+\emph{Theorem 3.}  
+There is no guarantee that $min(M,N)$ is asymptotically not larger than $nRows$ or $nCols$.
 \begin{proof}
 $N$ is the number of non-zero entries in the matrix $A$.
 Unless there is, or unless we are restricted to an upper-bound of sparsity, then $N$ must have $O(nRows*nCols)$ space.
 
 $M$ is the number of \emph{distinct} entries that we previously sampled.
-According to equation \ref{eq:msampled}, $M$ depends on the batch size at each iteration $B_r$, and the number of iterations previously done $t-1$.
+According to equation \ref{eq:msampled}, $M$ depends on the batch size at each iteration $B_l$, and the number of iterations previously done $t-1$.
 Usually, the batch size is a constant $B$.  Thus the lower bound of $M$ most likely depends on the lower bound of $t$.
 However, the lower bound of $t$ depends on the convergence rate, and the tolerance of error $\epsilon$.
 For example, if the convergence rate is exponential (e.g. $O(p^t)$), then the loewr bound of $t$ is $\Omega(log(\frac{1}{\epsilon}))$.
@@ -75,7 +76,50 @@ Given any objective function, the convergence rate of \emph{SAG} \cite{schmidt20
 In supervised machine-learning, we can use the chain-rule in differential-calculus to reduce space-complexity.
 Unfortunately, applying the chain-rule in matrix-factorization would result in a space-complexity larger than the na$\ddot{i}$ve approach.
 
-
+In supervised machine-learing, the goal is to compute the best-fit column-vector $\bar{\omega}$ that optimizes an objective function, which can be written as
 \begin{equation} \label{eq:sml}
-\operatorname*{arg\,min (or\,arg\,max)}_{\omega} f(X, \omega)
+\operatorname*{arg\,min (or\,arg\,max)}_{\bar{\omega}} \left[F(\hat{y} = X*\bar{\omega}) = \sum_{i=1}^{N} f_{i}(\hat{y}_{i} = \bar{x}_{i}*\bar{\omega}) \right]
 \end{equation}
+
+$X$ is a $N$-by-$d$ matrix: $N$ is the number of samples, and $d$ is the number of features.  
+$\bar{x}_{i}$ is the $1$-by-$d$ row vector reprsenting $i$-th sample.
+$\bar{\omega}$ is the $d$-by-$1$ column vector of features that we are trying to learn from $X$.
+We can use the chain-rule and re-write the gradient of $\bar{\omega}$ with respect to $f_{i}$:
+\begin{equation} \label{eq:chainsml}
+\frac{\text{d}f_{i}}{\text{d}\bar{\omega}} = \left(\frac{\text{d}f_{i}}{\text{d}\hat{y}_{i}}\right)\frac{\text{d}\hat{y}_{i}}{\text{d}\bar{\omega}} = \left(\bar{x}_{i}\right)'\left(\frac{\text{d}f_{i}}{\text{d}\hat{y}_{i}}\right)
+\end{equation}
+
+Originally, using the na$\ddot{i}$ve approach of \emph{SAG} results in $\theta(min(M,N)*d+d)$ space.
+The reason is that $\frac{\text{d}f_{i}}{\text{d}\bar{\omega}}$ is a $d$-by-$1$ column vector; and the na$\ddot{i}$ve approach stores $min(M,N)$ copies of them.  
+The memory gradient $\bar{m}_{\bar{\omega}}$ is a $d$-by-$1$ column vector and thus takes $\theta(d)$ space.
+
+The dot-product $\hat{y}_{i} = \left(\bar{x}_{i}*\bar{\omega}\right)$ is a $1$-by-$1$ scalar.  
+Consequently, $\frac{\text{d}f_{i}}{\text{d}\hat{y}_{i}}$ is also a $1$-by-$1$ scalar.  
+From equation \ref{eq:sml}, $\frac{\text{d}\hat{y}_{i}}{\text{d}\bar{\omega}}$ = $\left(\bar{x}_i\right)'$.
+Therefore, we can apply the chain rule and reduce space-complexity to $\theta(min(M,N)+d)$, because we can use the vector $\bar{x}_{i}$ to re-compute $\frac{\text{d}f_{i}}{\text{d}\bar{\omega}}$ from the scalar $\frac{\text{d}f_{i}}{\text{d}\hat{y}_{i}}$.
+
+\emph{Theorem 4.} 
+Applying the chain-rule for using \emph{SAG} in matrix facotrization would result in $\theta(min(M,N) + nDims*(min(M,N)+nRows+nCols))$ space.
+\begin{proof}
+In matrix factorization, $\hat{a}_{ij} = \left(\bar{u}_{i}*\bar{v}_{j}\right)$ is a $1$-by-$1$ scalar.  
+Therefore, we can rewrite the gradients as
+\begin{equation}
+\frac{\text{d}{f}}{\text{d}\bar{u}_{i}} = \left(\frac{\text{d}{f}}{\text{d}\hat{a}_{ij}}\right)\frac{\text{d}{\hat{a}_{ij}}}{\text{d}\bar{u}_{i}} = \left(\bar{v}_{j}\right)'\left(\frac{\text{d}{f}}{\text{d}\hat{a}_{ij}}\right)
+\end{equation}
+\begin{equation}
+\frac{\text{d}{f}}{\text{d}\bar{v}_{j}} = \left(\frac{\text{d}{f}}{\text{d}\hat{a}_{ij}}\right)\frac{\text{d}{\hat{a}_{ij}}}{\text{d}\bar{v}_{j}} = \left(\bar{u}_{i}\right)'\left(\frac{\text{d}{f}}{\text{d}\hat{a}_{ij}}\right)
+\end{equation}
+
+
+
+$\left(\frac{\text{d}{f}}{\text{d}\hat{a}_{ij}}\right)$ is a $1$-by-$1$ scalar, and the chain-rule approach stores $min(M,N)$ copies, occupying $\theta(min(M,N))$ space.
+
+Unfortunately both $U$ and $V$ change over time in matrix factorization.
+When we apply the chain-rule, we cannot just use the current versions of $\bar{u}_{i}$ and $\bar{v}_{j}$.
+We must use and thus must store the past versions of $\bar{u}_{i}^{l}$ and $\bar{v}_{j}^{l}$ at the last time $l$ that the entry $a_{ij}$ (in matrix $A$) was sampled.
+Both $\bar{u}_{i}^{l}$ and $\bar{v}_{j}^{l}$ are vectors of length $nDims$.
+Therefore, using the chain rule induces an additional $min(M,N)*2*nDims$ space.
+When we include the memory of aggregated gradients $\bar{m}_{U}$ and $\bar{m}_{V}$, the total space-complexity becomes larger than the na$\ddot{i}$ve approach with $\theta(min(M,N) + nDims*(min(M,N)+nRows+nCols))$ space.
+The chain-rule approach yields space savings in supervised machine-learning because $\bar{x}_{i}$ does not change over time; 
+so there is no need to store past versions of $\bar{x}_{i}$.
+\end{proof}

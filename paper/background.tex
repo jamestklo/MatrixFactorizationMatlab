@@ -47,10 +47,10 @@ that we previously sampled at an iteration before \emph{t}.
 As we will prove, when directly applied to matrix factorization without using our \tool approach, \emph{SAG} will have a asymptotic space complexity of $\theta(nDims*(min(M,N)+nRows+nCols))$.
 \emph{M} is the number of \emph{distinct} entries that we have previously sampled.  At any iteration $t$, 
 \begin{equation} \label{eq:msampled}
-M \propto \sum_{r=1}^{t} B_r
-M \leq \sum_{r=1}^{t} B_r
+M \propto \sum_{l=1}^{t} B_l
+M \leq \sum_{l=1}^{t} B_l
 \end{equation}
-$B_r$ is the batch size at ieration $r$; $r \leq t$.
+$B_r$ is the batch size at ieration $l$; $l \leq t$.
 Usually the batch size $B$ is constant for all iterations; then $M$ is proportional to and is less than or equal to $B*t$.
 
 Here, we want to point out that \tool preserves the low asymptotic time complexity as \emph{SAG}; and \tool reduces asymptotic space complexity to $\theta(N+nDims*(nRows+nCols))$. 
