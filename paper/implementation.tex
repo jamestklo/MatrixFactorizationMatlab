@@ -1,14 +1,30 @@
 \section{Implementation}
-\header{Matlab.}
+\header{Matlab and Mental Model.}
+We implement \tool in Matlab because Matlab is a widely popular tool for prototyping algorithms in machine learning and data mining.
+
+Matlab has an advantage that the system model of the source-code closely matches the mental model of the data-scientist.
+In the eyes of a data-scientist, the close match between the system model and the mental model makes the programming-language highly usable.
+
+For example, $\hat{A} = U*V$ is a mathematical representation for matrix multiplication.
+In Matlab, the code to multiply two matrices is exactly identical to the mathematical representation above.
+Thus data-scientists can exert the least amount of mental effort and seamlessly translate their thoughts into code.
+
+In C, C++ or Java, data-scientists must deal with additional mental overhead that distracts them from concentrating on their primary goal of formulating an algorithm: 
+e.g. memory allocation; pointers and references; variable type; the specific function name to use; namespaces; and the precise number, order and type of input arguments.
+
 
 \header{Architecture.}
-We architect our implementation so that we implement \tool only once in only one file.
+We architect our implementation so that we implement \tool only once in only one self-contained file.
 Given an objective function, switching between gradient methods requires changing only one line of code.
 That line of code is easily identifiable, locatable, modifiable and self-contained.
 Changing that line of code also does not have any side-effects and does not require changing other lines of code.
 
-\header{Batch Parallelism.}
-When 
-Re-computation can also run in parallel to the computation of new gradients.  
 
-Moreover, 
+\header{Batching and Parallelism.}
+Matlab vectorizes computations and parallelizes matrix operations by default.
+Matlab's parallel computing toolkit allows Matlab-users to run the same parallel version of code on a diversity of hardware from multi-core CPUs and CUDA-GPUs to multi-machine clusters. 
+\tool is implemented so that at each iteration, we can calculate in parallel the fine-grain gradients of individual entries sampled in the batch.
+
+Re-computation can also run in parallel to the computation of new gradients, 
+because the re-computation of a past gradient is entirely independent from the computation of a new gradient.
+To closely examine the true additional cost of re-computing, our evaluation does \emph{not} parallelize re-computing. 
