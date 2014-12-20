@@ -118,7 +118,17 @@ All 3 computers have the Matlab parallel computing toolkit.
 
 
 \subsection{Quality vs. Time}
-%\header{Methodology.}
-For the purpose of comparison, we fix the seed for generating random numbers so that 
-Measure optimization quaity in each iteration. report the best optimixatiom 
+\header{Methodology.}
+For the purpose of comparison, we fix the seed for generating random numbers so that all optimizations start with an identical $U$ and $V$.
+Moreover, both stochastic gradient and \emph{SAG} will sample an identical sequence of entries throughout the 5,000 iterations.
+At every iteration, we keep track of the best quality optimization each gradient method has yielded so far.
+% subset of datasets
 
+\begin{figure*}
+\centerline{\scalebox{1.00}{\includegraphics[width=6.4in, natwidth=852,natheight=574]{approx.png}}}
+\caption[Optimization Quality among gradient methods]{Optimization quality vs. Time among Full Deterministic Gradient \emph{FG}, Stochastic Gradient \emph{SG}, and Stochastic Average Gradient \emph{SAG}.}
+\label{table:approx}
+\end{figure*}
+
+
+\header{Discussion.}
