@@ -39,25 +39,40 @@ Compared to the na$\ddot{i}ve$ approach to SAG, in practice
 
 \subsection{Experimental Setup}
 
-\header{Objective Functions.}
+\header{Distinct Objective Functions.}
 The objective functions we choose already uses full deterministic gradient (\emph{FG}) or stochastic gradient (\emph{SG}).  
 In general, any function that is differentiable, and specifically any function that uses (\emph{FG}) or (\emph{SG}) can use \emph{SAG} and \tool.
 If a function is convex, then gradient methods guarantee a global optimum over time.
+The functions we have chosen are distinct from each other.  The goal is to illustrate \emph{SAG} and \tool are capable of working with different objective functions.
 % cite objective functions
 \begin{sloppy}
 \begin{compactenum}
-\item Least-squares: L2 and its variants \cite{mnar, wrmf2008hu, wrmf2008pan} are popular objective functions when building recommender systems.
-\item CLiMF \cite{climf}: Collaborative-Less-is-More-Filtering uses ordinal logistic regression to smooth the mean reciprocal rank function and to learn how a user ranks different items; 
+\item \emph{Least-squares}: L2 and its variants \cite{mnar, wrmf2008hu, wrmf2008pan} are popular objective functions when building recommender systems.
+\item \emph{CLiMF} \cite{climf}: Collaborative-Less-is-More-Filtering uses ordinal logistic regression to smooth the mean reciprocal rank function and to learn how a user ranks different items; 
 CLiMF performs gradient ascent because the optimization goal is to maximize an objective function.
-\item BPR-MF \cite{bpr}: Bayseian Personalized Learning has an objective function that minimizes 
+\item \emph{BPR-MF} \cite{bpr}: Bayseian Personalized Learning has an objective function that minimizes 
 the difference between any two \emph{item} ratings (column entries) of the same user (same row).
 BPR-MF performs gradient descent.
 \end{compactenum}
 \end{sloppy}
 
 
-\header{Sub-datasets.}
+\header{Diverse Datasets.}
+Our datasets are binary data that serve as implicit feedback in recommender systems. 
+They represent diverse relationships including trustees \cite{epinions}, webpage bookmarking \cite{digg12month1}, casting \cite{IMDB}, social network \cite{ljournal2008}, and linking webpages \cite{wikipedia20070206}.
+The datasets come from the Sparse Matrix collection at the University of Florida.
 % cite datasets
+\begin{sloppy}
+\begin{compactenum}
+\item \emph{Epinions} \cite{epinions}: $A(i,j) = 1$ when user $i$ is a trustee of user $j$, $A(i,j) = 0$ otherwise.  
+The trustee relationship is not necesseary mutual.  The epinions dataset is identical to the epinions dataset that Shi et al. used in \cite{climf}. 
+\item \emph{Digg12month1} \cite{digg12month1}: $A(i,j) = 1$ when user $i$ tags webpage $j$ as favorable; 0 represents no opinion. 
+\item \emph{IMDB} \cite{IMDB}: $A(i,j) = 1 $ if movie $i$ has actor or actress $j$ as cast, $A(i,j) = 0$ otherwise. 
+\item \emph{Live Journal} \cite{ljournal2008}:  $A(i,j) = 1 $ if user $i$ has user $j$ as his friend, $A(i,j) = 0$ otherwise. 
+The graph is directed because the friendship is not neceseary mutual.
+\item \emph{Wikipedia} \cite{wikipedia20070206}: $A(i,j) = 1$ if page $i$ links to page $j$, $A(i,j) = 0$ otherwise.  
+\end{compactenum}
+\end{sloppy}
 
 
 \header{Hyper Parameters.}
@@ -71,7 +86,6 @@ Through experience with our objective functions and datasets, we observed that 5
 As a result, we run \emph{FG} to 500 iterations, and compare how much longer 500 iterations of \emph{FG} would take than 5000 iterations of \emph{SG}.
 
 \begin{sloppy}
-% a table?
 \begin{compactitem}
 \item Step size or learning rate: 0.0001
 \item Regularization $\lambda$: 0.001; $\lambda$ is identical for regularizing both \emph{user} matrix $U$ and \emph{item} matrix $V$
