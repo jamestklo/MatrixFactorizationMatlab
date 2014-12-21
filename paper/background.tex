@@ -122,13 +122,13 @@ Second, \emph{SAG}'s convergence rate is faster than \emph{SG}, and sometimes as
 \header{Convergence rate, Iteration cost, and Prototyping recommender systems.}
 At a high level, the ideal combination of a fast convergence rate and a low iteration cost implies a better optimization in a shorter amount of time when data-scientists prototype model-based recommender systems.
 An intuition behind gradient methods is that, at least for objective functions that are convex, the gradients guide the updates of $U^t$ and $V^t$ towards the direction of optimization.  
-Convergence rate measures how many iterations a gradient method is expected to take towards reach a quality of optimization similar to \emph{FG}. 
+Convergence rate measures how many iterations a gradient method is expected to take towards reaching optimization. 
 Iteration cost measures how many entries we sample per iteration.
 
 Full deterministic gradient has the best possible convergence rate because each iteration of \emph{FG} samples all $N$ entries in the dataset.
 However, while \emph{FG} is guaranteed to take a less number of iterations than \emph{SG} to reach optimization, sampling all $N$ entries per iteration slows down \emph{FG} overall because the optimization process would still take many iterations.
 Depending on the mathematical properties of the objective function, stochastic gradient often has much slower convergence rates than \emph{FG} because \emph{SG} samples only one or a few random entries per iteration.
-Therefore, while \emph{SG} has the lowest possible $\theta(1)$ iteration cost, overall \emph{SG} is still slow because \emph{SG} would take many more iterations to reach optimization.
+Therefore, while \emph{SG} has the lowest possible $\theta(1)$ iteration cost, overall \emph{SG} is still slow because \emph{SG} would take many more iterations to reach  a quality of optimization similar to \emph{FG}.
 
 \emph{SAG} speeds-up the convergence rate by reusing the gradients of past samples.  
 Reusing past gradients enables \emph{SAG} to sample $\theta(1)$ entries per iteration and to achieve the lowest possible iteration cost.  
