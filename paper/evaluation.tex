@@ -120,9 +120,14 @@ All 3 computers have the Matlab parallel computing toolkit.
 \subsection{Quality vs. Time}
 \header{Methodology.}
 For the purpose of comparison, we fix the seed for generating random numbers so that all optimizations start with an identical $U$ and $V$.
-Moreover, both stochastic gradient and \emph{SAG} will sample an identical sequence of entries throughout the 5,000 iterations.
+Moreover, both stochastic gradient (\emph{SG}) and \emph{SAG} will sample an identical sequence of entries throughout the 5,000 iterations.
 At every iteration, we keep track of the best quality optimization each gradient method has yielded so far.
+
 % subset of datasets
+Running full deterministic gradient (\emph{FG}) for even 500 iterations was too time-consuming; 
+and we took subsets of datasets as figure \ref{table:memory} illustrates.
+We take the subset starting from the first row, first column of the matrix.
+We ensure there are sufficient non-zero entries in our evaluation and thus adjusted the subset dimensions accordingly.
 
 \begin{figure*}
 \centerline{\scalebox{1.00}{\includegraphics[width=6.1in, natwidth=851,natheight=574]{approx.png}}}
@@ -132,13 +137,39 @@ At every iteration, we keep track of the best quality optimization each gradient
 
 
 \header{Results and Discussion.}
-In Figure \ref{table:approx}, the first 3 columns illustrate the best quality optimization each gradient method achieved across different objective functions and datasets.  
-Stochastic gradient (\emph{SG}) yielded 
+The following is a legend to the metrics in figure \ref{table:approx}
+\begin{sloppy}
+\begin{compactenum}
+\item \emph{Best Approximation}: 
+the best quality optimization each gradient method achieved across different objective functions and various datasets.  
+\item \emph{\# of itrns $@$ convergence}: 
+the iteration at which each gradient achieved the best approximation.  
+In full deterministic gradient (\emph{FG}), every incremental iteration gradient always yields a better quality optimization. 
+In stochastic gradient (\emph{SG}), our observation confirms with theory that optimization quality would stay at a sub-optimum before the entire 5,000 iterations.
+\tool behaves like stochastic gradient in most cases; the only different is that \tool consistently yielded a much better optimization than \emph{SG}.
+\item \emph{99.9\%tile (sec) per itrn}
+The 99.9 percentile time an iteration takes.  
+When there are 5,000 iterations, we took the 5th longest iteration time.  
+When there are 500 iterations, we took the 2nd longest iteration time.
+Many literature in the systems area use 99.9 percentile time to guarantee a quality of service.  
+In this case, we want to closely measure how much longer an iterationt \tool takes than \emph{SG}.
+\end{compactenum}
+\end{sloppy}
+
+Stochastic gradient (\emph{SG}) yielded better quality optimizations in less than time full deterministic gradient (\emph{FG}).
+The reason is that \emph{FG} takes 1,000 to 10,000 much longer to run an iteration than \emph{SG}.
+\tool yielded much better quality optimizations than \emph{SG}; however \tool took up to 3 times longer to finish 5,000 iterations than \emph{SG}.
+To enforce re-computation, we let \tool perform a full deterministic gradient at the first iteration.  
+We observed that performing a full deterministic gradient at the first iteration sets \tool's optimization quality further apart from \emph{SG}'s.
 
 
 
-\subsection{Follow-up: \tool vs. Stochastic Gradient}
+\subsection{Follow-up Experiment}
 \header{Methodology.}
+To further study if \tool yields a better approximation in less time than \emph{SG}.  We ran a follow-up experiment.
+We add up the total time \tool takes to reach convergence: 1 iteration of \emph{FG}, plus other iterations of re-computation.
+Then, we transform this total time into the number of iterations for \emph{SG}, by dividing the total time by \emph{SG}'s unit iteration time. 
+We measure whether \emph{SG} can yield a better optimization given the added number of iterations.  
 
 \begin{figure*}
 \centerline{\scalebox{1.00}{\includegraphics[width=8.2in, natwidth=1263,natheight=649]{followup.png}}}
@@ -146,13 +177,57 @@ Stochastic gradient (\emph{SG}) yielded
 \label{table:followup}
 \end{figure*}
 
+\header{Results and Discussion.}
+The following is a legend to the metrics in figure \ref{table:approx}
+\begin{sloppy}
+\begin{compactenum}
+\item $\frac{\tool\:time}{\emph{SG}\:time}$: 
+multiplier of how much longer an iteration would \tool takes than an iteration of \emph{SG}.  
+An iteration of \tool takes up to 3 times as long as an iteration of \emph{SG}.
+\item \emph{\# of more itrns in SG}: 
+how many more bonus iterations we give to \emph{SG} so that we give \emph{SG} and \tool an equal amount of time to run their optimizations
+\item \emph{total \# of itrns in SG}: 
+total number of iterations \emph{SG} has we give \emph{SG} the bonus iterations
+\item \emph{Best approx, given equal time}:
+the best optimzation quality \emph{SG} and \tool achieve when both gradient methods have an equal amount of time to run optimization.
+In most cases, optimization quality of \emph{SG} did not improve despite given more iterations and more time.
+\item \emph{Least \# itrn to reach similar approx}:
+We measure how much longer \emph{SG} takes to reach a quality of optimization similar to \tool.
+However, even given a total of 20,000 iterations, \emph{SG} still yielded optimization quality worse than \tool.
+\item \emph{99.9\%tile (sec) to reach better approx.}:
+amount of time that \emph{SG} takes to reach a quality of optimization better than \tool.
+\tool still outperformed \emph{SG} even \emph{SG} has 20,000 iterations, and \tool has only 5,000.
+\item $\frac{\tool\:time}{\emph{SG}\:time}$: effective time to reach a similar quality of optimization;
+this column shows \tool is at least 4 times faster than \emph{SG} to reach a similar quality of optimization.
+\end{compactenum}
+\end{sloppy}
+
+A limitation in the follow-up experiment is the small number of non-zero entries in our sub-dataset.  
+If there are more non-zero entries, than \emph{SG} would be given more iteraitons, because \tool performs an iteration of \emph{FG} at the start.
+This is why we ran \emph{SG} for 20,000 iterations in total, and determine if 20,000 iterations of \emph{SG} can yield a better optimization than 5,000 iterations of \tool.
+Our results indicate that in most cases, \emph{SG} would take more than 20,000 iterations to reach an optimization quality similar to \tool.
+If we parallelize re-computation, then each iteration of \tool is faster and then we will give \emph{SG} less bonus iterations.  
+
 
 
 \subsection{Space vs. Time}
 \header{Methodology.}
+We measure memory usage after the first iteration.
 
 \begin{figure*}
 \centerline{\scalebox{1.00}{\includegraphics[width=6.1in, natwidth=753,natheight=362]{memory.png}}}
 \caption[Memory usage after first iteration]{Memory usage between (\emph{FG}), Stochastic Gradient (\emph{SG}), and \tool after the first iteration of updating the CLiMF \cite{climf} objective function.}
 \label{table:memory}
 \end{figure*}
+
+\header{Results and Discussion.}
+When Matlab performs dynamic updates to sparse matrices, memory usage seems to depend more on the dimensionality of the sparse matrix 
+(e.g. $(nRows*nCols)$-by-$nDims$) rather than $N$ the actual number of non-zero entries.
+
+\tool also has an advantage at the low level of programming.
+\tool stores $min(M,N)$ \emph{integers} as the predicted indices and does not update them.
+In contrast, the na$\ddot{i}$ve approach of SAG must store $2*nMems*nDims$ \emph{floating points}, and the na$\ddot{i}$ve approach updates these floating points dynamically in runtime.
+
+Therefore, in addition to providing dimensionality reduction, 
+\tool decouples \emph{SAG}'s dependence on the low-level implementation of sparse matrices in the underlying programming language or execution environment.
+Data Scientists do not need to spend time to find an efficient sparse-matrix implementation and integrate it into their code just to use \emph{SAG}.
