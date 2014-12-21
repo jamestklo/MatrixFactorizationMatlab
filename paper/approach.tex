@@ -13,8 +13,10 @@ The chain-rule approach is undesirable because it must store $min(M,N)$ differen
 There are two problems.  First, each entry can come from a different iteration; or different entries can come from different iterations.
 Second, the same entry may get sampled more than once at two or more different iterations.
 
+
+\header{Two simple steps.}
 To save space, we must store as few copies of $\bar{m}_{entry(b).i}^{t}$ and $\bar{m}_{entry(b).j}^{t}$ as possible.
-\tool resolves the two problems above with two steps.
+\tool resolves the two problems above with two simple steps.
 First, \tool predicts ahead the entires that we are going to sample.
 Second, \tool performs a full deterministic gradient \emph{FG} just before \tool re-samples the same entry.
 
@@ -45,6 +47,8 @@ When \tool performs ordinary \emph{SAG}, \tool computes but does \textbf{not sto
 \]
 \tool simply updates $\bar{m}_{U}^{s}$ and $\bar{m}_{V}^{s}$ with the newly computed fine-grain gradients, as equation \ref{eq:sag_mu} and equation \ref{eq:sag_mv} show.
 
+
+\header{How \tool is able to save space.}
 After we perform an iteration of \emph{FG}, we predict upcoming entries ahead of time.
 Therefore, at future iterations $t > s$ after a \emph{FG}, we ensure that the different entries that we are going to sample are \textbf{distinct} before we perform another iteration of full deterministic gradient.
 The significance of having \emph{distinct} entries is that, at future iterations $t > s$, we will not overwrite any fine-grain gradient of individual entries:
@@ -64,6 +68,8 @@ We do not use the chain-rule: not all objective functions is compatible with it.
 Both \cite{climf, bpr} do not work with the chain-rule because computing the fine-grain gradient of an entry requires not just ($\hat{a}_{ij} = \bar{u}_{i}*\bar{v}_{j}$), 
 but also ($\hat{a}_{ik} = \bar{u}_{i}*\bar{v}_{k}$) for all $k \neq j$.
 
+
+\header{Theoretical properties of \tool.}
 Next we prove \tool preserves the theoretical advantages of \emph{SAG}, and \tool is compact in space.
 
 \emph{Theorem 5.}
