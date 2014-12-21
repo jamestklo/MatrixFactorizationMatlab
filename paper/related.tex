@@ -1,5 +1,5 @@
 \section{Related Work}
-\header{SAG.}
+\header{Stochastic Average Gradient.}
 \tool extends and adapts \emph{SAG} into matrix factorization for data-scientists prototyping recommender systems.
 \emph{SAG} \cite{schmidt2013minimizing, roux2012stochastic} scales convex-optimzation in supervised machine-learning to a large number of samples, and a large number of features.
 Block-parallel \emph{SAG} ~\cite{bpsag} is another extension of \emph{SAG}.
@@ -13,8 +13,11 @@ For example \cite{gemulla2011large} distributes stochastic gradient;
 Both focus on scalability while \tool focuses on prototyping.
 
 \tool advocates a new gradient method that has never been used in matrix factorization.  
-\tool is implemented in Matlab and takes advantage of Matlab's parallel computing toolkit for distribution and parallelization.
-\tool is architected so that ideally data-scientists do not have to learn any new material for using \tool
+\tool is currently implemented in Matlab and takes advantage of Matlab's parallel computing toolkit for distribution and parallelization across diverse hardware.
+Using a specific approach to distribution or parallelization often requires adopting a specific programming model or execution environment.  
+Matlab is already a widely popular programming language for prototyping algorithms in machine learning and data mining.
+Using the current implementation of \tool does not require data-scientists already using Matlab to learn a new programming language.
+Moreover, \tool is architected so that ideally data-scientists do not have to learn any new material for using \tool.
 
 
 \header{Alternating Least Squares.}
