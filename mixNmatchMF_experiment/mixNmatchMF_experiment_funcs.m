@@ -4,27 +4,27 @@ function [] = mixNmatchMF_experiment_funcs()
 	
 	if true
 		options = struct;
-		options.maxIter = 20000;
+		options.maxIter = 5000;
 		addpath '../mixNmatchMF_L2';
-		mixNmatchMF_experiment_datasets(@mixNmatchMF_options_L2, './L2_20000.mat', options)
+		mixNmatchMF_experiment_datasets(@mixNmatchMF_options_L2, './L2_SVRG.mat', options)
 		clear all;
 		close all;
 	end
 
 	if false
 		options = struct;
-		options.maxIter = 20000;
+		options.maxIter = 5000;
 		addpath '../mixNmatchMF_CLiMF/';
-		mixNmatchMF_experiment_datasets(@mixNmatchMF_options_CLiMF, './CLiMF_20000.mat', options);
+		mixNmatchMF_experiment_datasets(@mixNmatchMF_options_CLiMF, './CLiMF_SVRG.mat', options);
 		clear all;
 		close all;
 	end
 
 	if false
 		options = struct;
-		options.maxIter = 20000;		
+		options.maxIter = 5000;		
 		addpath '../mixNmatchMF_BPR/';
-		mixNmatchMF_experiment_datasets(@mixNmatchMF_options_BPR, './BPR_20000.mat', options);
+		mixNmatchMF_experiment_datasets(@mixNmatchMF_options_BPR, './BPR_SVRG.mat', options);
 		clear all;
 		close all;
 	end

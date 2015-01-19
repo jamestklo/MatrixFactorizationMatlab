@@ -13,7 +13,7 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 
 	% default is to use zero buffer size
 	batchSize = length(points);
-    totalSize = nnz(M);
+	totalSize = nnz(M);
 	if isfield(options, 'SAG_nBufs')
 		SAG_nBufs = max(-1, options.SAG_nBufs);
 	else
@@ -28,46 +28,47 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 		options.G_Umemory = sparse(nRows, nDims);
 		options.G_Vmemory = sparse(nDims, nCols);
 		for b=1:batchSize
-            point = points(b);
+			point = points(b);
 			[i, j] = position(point, nRows);
-            options.SAG_seen(point) = t;
+			options.SAG_seen(point) = t;
 			options.G_Umemory(i,:) = options.G_Umemory(i,:) + G_Ub{b}; % 1 x nDim
 			options.G_Vmemory(:,j) = options.G_Vmemory(:,j) + G_Vb{b}; % nDim x 1
-        end
-        
-        futureSize = min(batchSize*(options.maxIter-1), totalSize);
- 		if SAG_nBufs >= 0 && SAG_nBufs < futureSize
+		end
+				
+		futureSize = min(batchSize*(options.maxIter-1), totalSize);
+		if SAG_nBufs >= 0 && SAG_nBufs < futureSize
 			options.SAG_U0 = U;
 			options.SAG_V0 = V;
-        end
+		end
 	
 	 	if SAG_nBufs > 0
 			options.SAG_Umemory = sparse(nDims, nRows*nCols);
 			options.SAG_Vmemory = sparse(nDims, nRows*nCols);
-            if futureSize < SAG_nBufs
-                SAG_nBufs = futureSize;    
-                options.SAG_nBufs = SAG_nBufs;
-            end
-            for b=1:min(SAG_nBufs, batchSize)
+			if futureSize < SAG_nBufs
+				SAG_nBufs = futureSize;		
+				options.SAG_nBufs = SAG_nBufs;
+			end
+			for b=1:min(SAG_nBufs, batchSize)
 				point = points(b);
 				options.SAG_Umemory(:,point) = transpose(G_Ub{b}); % 1 x nDim
 				options.SAG_Vmemory(:,point) = G_Vb{b}; % nDims x 1
-            end
-        end
-        
-        % randomly select future points from non-zero entries
-        % sample without replacement
-        points = find(M);
-        for b=1:futureSize
-            swap = ceil(totalSize*rand(1));
-            temp = points(b);
-            points(b) = points(swap);
-            points(swap) = temp;
-        end
-        options.SAG_future = points(1:futureSize);
-    else
-        isSAGmemory = isfield(options, 'SAG_Umemory') && isfield(options, 'SAG_Vmemory');
-        isUV0memory = isfield(options, 'SAG_U0') && isfield(options, 'SAG_V0');
+			end
+		end
+				
+		% randomly select future points from non-zero entries
+		% sample without replacement
+		points = find(M);
+		for b=1:futureSize
+			swap = ceil(totalSize*rand(1));
+			temp = points(b);
+			points(b) = points(swap);
+			points(swap) = temp;
+		end
+		options.SAG_future = points(1:futureSize);
+		
+	else
+		isSAGmemory = isfield(options, 'SAG_Umemory') && isfield(options, 'SAG_Vmemory');
+		isUV0memory = isfield(options, 'SAG_U0') && isfield(options, 'SAG_V0');
 		for b=1:batchSize
 			point = points(b);
 			[i, j] = position(point, nRows);
@@ -81,15 +82,16 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 					isRecomputing = false;
 					options.G_Umemory(i,:) = options.G_Umemory(i,:) - transpose(SAG_UmemoryAt) + G_Ub{b}; % 1 x nDims
 					options.G_Vmemory(:,j) = options.G_Vmemory(:,j) - SAG_VmemoryAt + G_Vb{b}; % nDims x 1
-                end
+				end
 				if (nnz(options.SAG_Umemory)/nDims) <= SAG_nBufs
 					options.SAG_Umemory(:,point) = transpose(G_Ub{b}); % nDims x 1
 					options.SAG_Vmemory(:,point) = G_Vb{b}; % nDims x 1
 				else % buffer is full, reset 
 					options.SAG_Umemory(:,point) = zeros(nDims, 1); % nDims x 1
 					options.SAG_Vmemory(:,point) = zeros(nDims, 1); % nDims x 1	 		
-                end
+				end
 			end
+
 			if isRecomputing 
 				if isUV0memory
 					[o_f, o_gu, o_gv] = options.objectiveAt(M, options.SAG_U0, options.SAG_V0, i, j);
@@ -103,19 +105,19 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 					end
 					options.G_Umemory(i,:) = options.G_Umemory(i,:) - o_gu - r_gu + G_Ub{b}; % 1 x nDims
 					options.G_Vmemory(:,j) = options.G_Vmemory(:,j) - o_gv - r_gv + G_Vb{b}; % nDims x 1
-                else % SAG-MF lazy
+				else % SAG-MF lazy
 					options.G_Umemory(i,:) = options.G_Umemory(i,:) + G_Ub{b}; % 1 x nDims
 					options.G_Vmemory(:,j) = options.G_Vmemory(:,j) + G_Vb{b}; % nDims x 1 
 				end
 			end
-        end
+		end
 	end
 
 	% stepSize < 0 for descent
 	% stepSize > 0 for ascent
 	if isfield(options, 'SAG_seen')
-        stepSize = options.stepSize/nnz(options.SAG_seen);
-    else
+		stepSize = options.stepSize/nnz(options.SAG_seen);
+	else
 		stepSize = options.stepSize/(t*batchSize);
 	end
 	U = U + stepSize*(options.G_Umemory);

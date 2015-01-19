@@ -31,10 +31,11 @@ end
 function [measurements] = mixNmatchMF_experiment_gradients(options, optionsF, readData)
   addpath '../mixNmatchMF/';
 
-  gradients = cell(3, 1);
+  gradients = cell(4, 1);
   %gradients{1} = @mixNmatchMF_options_FullGD;
-  gradients{2} = @mixNmatchMF_options_StochasticGD; 
+  %gradients{2} = @mixNmatchMF_options_StochasticGD; 
   %gradients{3} = @mixNmatchMF_options_SAG;
+  gradients{4} = @mixNmatchMF_options_SVRG
 
   measurements = cell(length(gradients), 1);
   parfor g=1:length(gradients)
@@ -65,6 +66,13 @@ function [options] = mixNmatchMF_options_SAG(options)
 	options.batchAt = @mixNmatchMF_batchAt_random;
 	options.batchSize = -1;
 	options.update = @mixNmatchMF_update_memory;
+end
+
+
+function [options] = mixNmatchMF_options_SVRG(options)
+  options.batchAt = @mixNmatchMF_batchAt_random;
+  options.batchSize = 1;
+  options.update = @mixNmatchMF_update_SVRG;
 end
 
 

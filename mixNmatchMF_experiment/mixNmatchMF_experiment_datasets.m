@@ -2,16 +2,16 @@ function [data, table] = mixNmatchMF_experiment_datasets(optionsF, filepath, opt
 	data = cell(5,1);
 	addpath '../mixNmatchMF_data/';
 
-	if false
+	if true
 		d = 1;
 		data{d} = cell(4,1);
 		data{d}{1} = 'epinions'; 
 		data{d}{2} = options;	
 		data{d}{3} = optionsF;
-		data{d}{4} = @mixNmatchMF_data_epinionsTest; 
+		data{d}{4} = @mixNmatchMF_data_epinionsTrain; 
 	end
 
-	if true
+	if false
 		d = 2;
 		data{d} = cell(4,1);
 		data{d}{1} = 'Digg'; 
