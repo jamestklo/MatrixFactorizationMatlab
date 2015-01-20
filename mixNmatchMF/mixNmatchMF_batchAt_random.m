@@ -4,8 +4,11 @@ function [points] = mixNmatchMF_batchAt_random(M, options, t)
     batchSize = options.batchSize;
     if (batchSize < 0) 
       if t == 1
-        %batchSize = totalSize;
-        batchSize = -batchSize;
+        if isfield(options, 'SAG_nBufs') && options.SAG_nBufs < 0
+          batchSize = -batchSize;
+        else
+          batchSize = totalSize;  
+        end
       else
         batchSize = -batchSize;
       end

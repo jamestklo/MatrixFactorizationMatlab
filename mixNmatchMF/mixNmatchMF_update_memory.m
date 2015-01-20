@@ -13,14 +13,13 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 
 	% default is to use zero buffer size
 	batchSize = length(points);
-	totalSize = nnz(M);
+    totalSize = nnz(M);
 	if isfield(options, 'SAG_nBufs')
 		SAG_nBufs = max(-1, options.SAG_nBufs);
 	else
 		SAG_nBufs = 0;
 		options.SAG_nBufs = SAG_nBufs;
 	end
-
 	[nRows, nDims] = size(U);
 	[nDims, nCols] = size(V);
 	if t == 1
