@@ -40,7 +40,7 @@ function [U, V, options] = mixNmatchMF_update_SVRG(M, U, G_Ub, V, G_Vb, points, 
 			[i, j] = position(point, nRows);
 			[o_f, o_gu, o_gv] = options.objectiveAt(M, U, V, i, j);
 			if lambdaU ~= 0 || lambdaV ~= 0
-				[r_f, r_gu, r_gv] = options.regularizeAt(U, lambdaU, V, lambdaV);
+				[r_f, r_gu, r_gv] = options.regularizeAt(U, lambdaU, V, lambdaV, i, j);
 			else
 				r_f = 0;
 				r_gu = 0;
@@ -59,6 +59,8 @@ function [U, V, options] = mixNmatchMF_update_SVRG(M, U, G_Ub, V, G_Vb, points, 
 		SVRG_U = options.SVRG_U;
 		SVRG_V = options.SVRG_V;
 		for b=1:batchSize
+			point = points(b);
+			[i, j] = position(point, nRows);			
 			[o_f, o_gu, o_gv] = options.objectiveAt(M, SVRG_U, SVRG_V, i, j);
 			% if regularizer is a function
 			if lambdaU ~= 0 || lambdaV ~= 0
