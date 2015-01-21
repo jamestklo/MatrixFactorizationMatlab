@@ -1,4 +1,3 @@
-% Slide 13 of http://cikm2014.fudan.edu.cn/cikm2014/Tpl/Public/slides/ZhangTongTalk.pdf
 function [U, V, options] = mixNmatchMF_update_SVRG(M, U, G_Ub, V, G_Vb, points, options, t)
 % M 		original sparse matrix
 % U			a nRows x nDims matrix 
@@ -26,10 +25,16 @@ function [U, V, options] = mixNmatchMF_update_SVRG(M, U, G_Ub, V, G_Vb, points, 
 		lambdaV = 0;
 	end
 	
+	if isfield(options, 'SVRG_reset')
+		SVRG_reset = options.SVRG_reset;
+	else
+		% default is to reset for every 2*nnz(M) iterations
+		SVRG_reset = 2*nnz(M);
+		options.SVRG_reset = SVRG_reset;
+	end
 
 	% Here, SVRG is implemented in a way to fit the coding pattern of the mixNmatchMF framework
-	%if isReset % do a full deterministic gradient 	
-	if t == 1
+	if mod(t, SVRG_reset) == 1
 		gU = sparse(nRows, nDims);
 		gV = sparse(nDims, nCols);
 		% full deterministic gradient of only non-zero entries in sparse matrix
