@@ -1,4 +1,4 @@
-function [U, V, options] = mixNmatchMF_update_SVRG(M, U, G_Ub, V, G_Vb, points, options, t)
+function [U, V, options, t] = mixNmatchMF_update_SVRG(M, U, V, f, G_Ub, G_Vb, points, options, t)
 % M 		original sparse matrix
 % U			a nRows x nDims matrix 
 % V			a nDims x nCols matrix
@@ -14,17 +14,12 @@ function [U, V, options] = mixNmatchMF_update_SVRG(M, U, G_Ub, V, G_Vb, points, 
 
 	batchSize = length(points);
 
-	if isfield(options, 'lambdaU')
-		lambdaU = options.lambdaU;
-	else
-		lambdaU = 0;
+	objectiveAt = options.objectiveAt;
+	[isRegularizing, lambdaU, lambdaV] = mixNmatchMF_isRegularizing(options);
+	if isRegularizing
+		regularizeAt = options.regularizeAt;
 	end
-	if isfield(options, 'lambdaV')
-		lambdaV = options.lambdaV;	
-	else
-		lambdaV = 0;
-	end
-	
+
 	if isfield(options, 'SVRG_reset')
 		SVRG_reset = options.SVRG_reset;
 	else
@@ -43,9 +38,9 @@ function [U, V, options] = mixNmatchMF_update_SVRG(M, U, G_Ub, V, G_Vb, points, 
 		for b=1:totalSize
 			point = points(b);
 			[i, j] = position(point, nRows);
-			[o_f, o_gu, o_gv] = options.objectiveAt(M, U, V, i, j);
-			if lambdaU ~= 0 || lambdaV ~= 0
-				[r_f, r_gu, r_gv] = options.regularizeAt(U, lambdaU, V, lambdaV, i, j);
+			[o_f, o_gu, o_gv] = objectiveAt(M, U, V, i, j);
+			if isRegularizing
+				[r_f, r_gu, r_gv] = regularizeAt(U, lambdaU, V, lambdaV, i, j);
 			else
 				r_f = 0;
 				r_gu = 0;
@@ -54,6 +49,8 @@ function [U, V, options] = mixNmatchMF_update_SVRG(M, U, G_Ub, V, G_Vb, points, 
 			gU(i,:) = gU(i,:) + o_gu + r_gu; % 1 x nDims
 			gV(:,j) = gV(:,j) + o_gv + r_gv; % nDims x 1
 		end	
+		gU = gU / totalSize;
+		gV = gV / totalSize;
 		options.G_Umemory = gU;
 		options.G_Vmemory = gV;
 		options.SVRG_U = U;
@@ -66,10 +63,10 @@ function [U, V, options] = mixNmatchMF_update_SVRG(M, U, G_Ub, V, G_Vb, points, 
 		for b=1:batchSize
 			point = points(b);
 			[i, j] = position(point, nRows);			
-			[o_f, o_gu, o_gv] = options.objectiveAt(M, SVRG_U, SVRG_V, i, j);
+			[o_f, o_gu, o_gv] = objectiveAt(M, SVRG_U, SVRG_V, i, j);
 			% if regularizer is a function
-			if lambdaU ~= 0 || lambdaV ~= 0
-				[r_f, r_gu, r_gv] = options.regularizeAt(SVRG_U, lambdaU, SVRG_V, lambdaV, i, j);
+			if isRegularizing
+				[r_f, r_gu, r_gv] = regularizeAt(SVRG_U, lambdaU, SVRG_V, lambdaV, i, j);
 			else
 				r_f = 0;
 				r_gu = 0;
@@ -81,7 +78,7 @@ function [U, V, options] = mixNmatchMF_update_SVRG(M, U, G_Ub, V, G_Vb, points, 
 	end
 	% stepSize < 0 for descent
 	% stepSize > 0 for ascent
-	stepSize = options.stepSize/batchSize;	
+	stepSize = options.stepSize;
 	U = U + stepSize*gU; % nRows x nDims
 	V = V + stepSize*gV; % nDims x nCols
 end
