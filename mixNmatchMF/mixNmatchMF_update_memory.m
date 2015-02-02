@@ -1,6 +1,6 @@
-function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points, options, t)
+function [U, V, options, t] = mixNmatchMF_update_memory(M, U, V, f, G_Ub, G_Vb, points, options, t)
 % U		a nRows x nDims matrix 
-% V		a nDims x nCols matrix
+% V		a nDims x nCols matrix 
 % G_Ub	a cell of b 1 x nDims arrays
 % G_Vb	a cell of b nDims x 1 arrays
 % points array of points processed in the current batch
@@ -13,7 +13,7 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 
 	% default is to use zero buffer size
 	batchSize = length(points);
-    totalSize = nnz(M);
+	totalSize = nnz(M);
 	if isfield(options, 'SAG_nBufs')
 		SAG_nBufs = max(-1, options.SAG_nBufs);
 	else
@@ -22,7 +22,7 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 	end
 	[nRows, nDims] = size(U);
 	[nDims, nCols] = size(V);
-	if t == 1
+	if t == 1 % reset
 		options.SAG_seen = sparse(nRows, nCols);
 		options.G_Umemory = sparse(nRows, nDims);
 		options.G_Vmemory = sparse(nDims, nCols);
@@ -68,6 +68,12 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 	else
 		isSAGmemory = isfield(options, 'SAG_Umemory') && isfield(options, 'SAG_Vmemory');
 		isUV0memory = isfield(options, 'SAG_U0') && isfield(options, 'SAG_V0');
+		[isRegularizing, lambdaU, lambdaV] = mixNmatchMF_isRegularizing()
+		objectiveAt = options.objectiveAt;
+		if isRegularizing
+			regularizeAt = options.regularizeAt;
+		end
+
 		for b=1:batchSize
 			point = points(b);
 			[i, j] = position(point, nRows);
@@ -93,10 +99,10 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 
 			if isRecomputing 
 				if isUV0memory
-					[o_f, o_gu, o_gv] = options.objectiveAt(M, options.SAG_U0, options.SAG_V0, i, j);
+					[o_f, o_gu, o_gv] = objectiveAt(M, options.SAG_U0, options.SAG_V0, i, j);
 					% if regularizer is a function
-					if options.lambdaU ~= 0 || options.lambdaV ~= 0
-						[r_f, r_gu, r_gv] = options.regularizeAt(options.SAG_U0, options.lambdaU, options.SAG_V0, options.lambdaV, i, j);
+					if isRegularizing
+						[r_f, r_gu, r_gv] = regularizeAt(options.SAG_U0, options.lambdaU, options.SAG_V0, options.lambdaV, i, j);
 					else
 						r_f = 0;
 						r_gu = 0;
@@ -112,6 +118,8 @@ function [U, V, options] = mixNmatchMF_update_memory(M, U, G_Ub, V, G_Vb, points
 		end
 	end
 
+	if isfield(options, 'lineSearch') && 
+	end
 	% stepSize < 0 for descent
 	% stepSize > 0 for ascent
 	if isfield(options, 'SAG_seen')

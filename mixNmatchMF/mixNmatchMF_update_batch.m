@@ -1,4 +1,4 @@
-function [U, V, options] = mixNmatchMF_update_batch(M, U, G_Ub, V, G_Vb, points, options, t)
+function [U, V, options, t] = mixNmatchMF_update_batch(M, U, V, f, G_Ub, G_Vb, points, options, t)
   batchSize = length(points);
   if batchSize > 0
     [nRows, nDims] = size(U);
