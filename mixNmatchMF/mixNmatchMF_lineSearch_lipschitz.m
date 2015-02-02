@@ -1,11 +1,16 @@
-function [L_U, L_V, t] = mixNmatchMF_update_LineSearch(M, U, V, f, G_Ub, G_Vb, points, options, t)
+function [stepSizeU, stepSizeV, t] = mixNmatchMF_lineSearch_lipschitz(M, U, V, f, G_Ub, G_Vb, points, options, t)
 	[isRegularizing, lambdaU, lambdaV] = mixNmatchMF_isRegularizing(options);
 	precision = pow2(-26);
+	[nRows, nDims] = size(U);
+
 
 	L_U = 1e-8;
 	L_V = 1e-8;
 
 	b = 1;
+	point = points(b);
+	[i, j] = position(point, nRows);
+
 	f_b = f(b);
 	gU = G_Ub{b};	% 1 x nDims
 	gUgU = gU*transpose(gU);
@@ -29,6 +34,7 @@ function [L_U, L_V, t] = mixNmatchMF_update_LineSearch(M, U, V, f, G_Ub, G_Vb, p
 		end
 		U(i,:) = Ui_orig;
 	end
+	stepSizeU = 1/L_U/16;
 
 	if gVgV > precision
 		o_f = Inf;
@@ -45,4 +51,5 @@ function [L_U, L_V, t] = mixNmatchMF_update_LineSearch(M, U, V, f, G_Ub, G_Vb, p
 		end
 		V(:,j) = Vj_orig;
 	end
+	stepSizeV = 1/L_V/16;
 end

@@ -118,15 +118,24 @@ function [U, V, options, t] = mixNmatchMF_update_memory(M, U, V, f, G_Ub, G_Vb, 
 		end
 	end
 
-	if isfield(options, 'lineSearch') && 
-	end
 	% stepSize < 0 for descent
 	% stepSize > 0 for ascent
-	if isfield(options, 'SAG_seen')
-		stepSize = options.stepSize/nnz(options.SAG_seen);
-	else
-		stepSize = options.stepSize/(t*batchSize);
+	if isfield(options, 'lineSearch') && isa(options.lineSearch, 'function_handle')
+		[stepSizeU, stepSizeV, t] = options.lineSearch(M, U, V, f, G_Ub, G_Vb, points, options, t);
+		if options.stepSize < 0
+			stepSizeU = 0 - stepSizeU;
+			stepSizeV = 0 - stepSizeV;
+		end
+	elseif isfield(options, 'stepSize')
+		stepSizeU = options.stepSize;
+		stepSizeV = stepSizeU;
 	end
-	U = U + stepSize*(options.G_Umemory);
-	V = V + stepSize*(options.G_Vmemory);	
+
+	if isfield(options, 'SAG_seen')
+		totalSize = nnz(optionns.SAG_seen);
+	else
+		totalSize = t*batchSize;
+	end
+	U = U + stepSizeU*(options.G_Umemory)/totalSize;
+	V = V + stepSizeV*(options.G_Vmemory)/totalSize;
 end
