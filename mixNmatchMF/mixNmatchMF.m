@@ -23,7 +23,8 @@ function [Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memr
 	memry = zeros(1, maxIter);
 	for t=1:maxIter
 		tic;	% start timer
-		[f, G_Ub, G_Vb, points] = objective(M, U, V, options, t);
+		[points] = options.batchAt(M, options, t);
+		[f, G_Ub, G_Vb] = objective(M, U, V, points, options, t);
 		[U, V, options, t] = update(M, U, V, f, G_Ub, G_Vb, points, options, t);
 		times(t) = toc;
 		if false
@@ -37,7 +38,7 @@ function [Uopt, Vopt, f_opt, f_all, t_opt, times_avg, times_999, memry_avg, memr
 			Uopt = U;
 			Vopt = V;
 			fprintf('mixNmatchMF(): t=%d\tf_opt=%1.16d\ttime=%1.16d\tmemry=%1.6d\n', t_opt, f_opt, times(t_opt), memry(t_opt));
-		end		
+		end
 	end
 	f_all = objectiveAll(M, Uopt, Vopt);
 	%times_tot = sum(times(1:t_opt));

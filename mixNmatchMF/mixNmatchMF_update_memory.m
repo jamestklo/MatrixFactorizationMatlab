@@ -122,10 +122,6 @@ function [U, V, options, t] = mixNmatchMF_update_memory(M, U, V, f, G_Ub, G_Vb, 
 	% stepSize > 0 for ascent
 	if isfield(options, 'lineSearch') && isa(options.lineSearch, 'function_handle')
 		[stepSizeU, stepSizeV, t] = options.lineSearch(M, U, V, f, G_Ub, G_Vb, points, options, t);
-		if options.stepSize < 0
-			stepSizeU = 0 - stepSizeU;
-			stepSizeV = 0 - stepSizeV;
-		end
 	elseif isfield(options, 'stepSize')
 		stepSizeU = options.stepSize;
 		stepSizeV = stepSizeU;

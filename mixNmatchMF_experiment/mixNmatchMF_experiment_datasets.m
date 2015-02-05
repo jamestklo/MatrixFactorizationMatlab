@@ -2,7 +2,7 @@ function [data, table] = mixNmatchMF_experiment_datasets(optionsF, filepath, opt
 	data = cell(5,1);
 	addpath '../mixNmatchMF_data/';
 
-	if true
+	if false
 		d = 1;
 		data{d} = cell(4,1);
 		data{d}{1} = 'epinions'; 
@@ -11,7 +11,7 @@ function [data, table] = mixNmatchMF_experiment_datasets(optionsF, filepath, opt
 		data{d}{4} = @mixNmatchMF_data_epinionsTrain; 
 	end
 
-	if false
+	if true
 		d = 2;
 		data{d} = cell(4,1);
 		data{d}{1} = 'Digg'; 
@@ -49,7 +49,7 @@ function [data, table] = mixNmatchMF_experiment_datasets(optionsF, filepath, opt
 
 	% start experiment
 	addpath '../mixNmatchMF_experiment/';
-	[results, labels] = mixNmatchMF_experiment_start(data);
+	[results, labels] = mixNmatchMF_experiment_z(data);
 
 	% save results
 	[table] = mixNmatchMF_experiment_save(filepath, results, labels);

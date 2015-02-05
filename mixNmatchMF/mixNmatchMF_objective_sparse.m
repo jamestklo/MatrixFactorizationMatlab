@@ -1,11 +1,10 @@
-function [f, G_Ub, G_Vb, points] = mixNmatchMF_objectiveSparse(M, U, V, options, t)
+function [f, G_Ub, G_Vb] = mixNmatchMF_objectiveSparse(M, U, V, points, options, t)
   objectiveAt	= options.objectiveAt;
   [isRegularizing, lambdaU, lambdaV] = mixNmatchMF_isRegularizing(options);
   if isRegularizing
     regularizeAt = options.regularizeAt;
   end
   
-  [points] = options.batchAt(M, options, t);
   batchSize = length(points);
   G_Ub = cell(batchSize,1);
   G_Vb = cell(batchSize,1);
@@ -24,4 +23,6 @@ function [f, G_Ub, G_Vb, points] = mixNmatchMF_objectiveSparse(M, U, V, options,
       f(b) = f(b) + r_f;
     end
   end
+
+  % f = mean(f);
 end
