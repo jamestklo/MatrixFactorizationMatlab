@@ -49,7 +49,7 @@ function [data, table] = mixNmatchMF_experiment_datasets(optionsF, filepath, opt
 
 	% start experiment
 	addpath '../mixNmatchMF_experiment/';
-	[results, labels] = mixNmatchMF_experiment_z(data);
+	[results, labels] = mixNmatchMF_experiment_start(data);
 
 	% save results
 	[table] = mixNmatchMF_experiment_save(filepath, results, labels);
