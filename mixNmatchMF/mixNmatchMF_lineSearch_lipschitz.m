@@ -10,6 +10,16 @@ function [stepSizeU, stepSizeV, t] = mixNmatchMF_lineSearch_lipschitz(M, U, V, f
 	% stepSizeV = 1/L_V; L_V = Lipschitz constant for V matrix	
 	stepSizeV = 1e8;
 
+
+	if isfield(options, 'stepSize')
+		isDescent = options.stepSize;
+		if isDescent > 0
+			isDescent = 1;
+		else
+			isDescent = -1;
+		end			
+	end
+
 	b = 1;
 	point = points(b);
 	[i, j] = position(point, nRows);
@@ -26,8 +36,8 @@ function [stepSizeU, stepSizeV, t] = mixNmatchMF_lineSearch_lipschitz(M, U, V, f
 	if gUgU > precision
 		o_f = Inf;
 		Ui_orig = U(i,:);
-		while (o_f  > (f_b - gUgU*stepSizeU))		
-			U(i,:) = Ui_orig - gU*stepSizeU;
+		while (o_f  > (f_b + isDescent*gUgU*stepSizeU))		
+			U(i,:) = Ui_orig + isDescent*gU*stepSizeU;
 			fprintf('mixNmatchMF_lineSearch_lipschitz(): t=%d\tstepSizeU=%1.16d\to_f=%1.16d\trhs=%1.16d\n', t, stepSizeU, o_f, (f_b - gUgU*stepSizeU/2));
 			[o_f, o_gu, o_gv] = options.objectiveAt(M, U, V, i, j);
 			if isRegularizing
@@ -43,8 +53,8 @@ function [stepSizeU, stepSizeV, t] = mixNmatchMF_lineSearch_lipschitz(M, U, V, f
 	if gVgV > precision
 		o_f = Inf;
 		Vj_orig = V(:,j);
-		while (o_f  > (f_b - gVgV*stepSizeV)) 		
-			V(:,j) = Vj_orig - gV*stepSizeV;
+		while (o_f  > (f_b + isDescent*gVgV*stepSizeV)) 		
+			V(:,j) = Vj_orig + isDescent*gV*stepSizeV;
 			fprintf('mixNmatchMF_lineSearch_lipschitz(): t=%d\tstepSizeV=%1.16d\to_f=%1.16d\trhs=%1.16d\n', t, stepSizeV, o_f, (f_b - gVgV*stepSizeV/2));
 			[o_f, o_gu, o_gv] = options.objectiveAt(M, U, V, i, j);
 			if isRegularizing
